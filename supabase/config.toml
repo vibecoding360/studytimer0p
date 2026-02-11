@@ -1,0 +1,4 @@
+project_id = "nhttxgiskwvykwcymbsw"
+
+[functions.parse-syllabus]
+verify_jwt = false
