@@ -4,12 +4,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
-import { Upload, Sparkles, Check, FileText, Loader2 } from "lucide-react";
+import { Check, FileText, Loader2 } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import UploadZone from "@/components/UploadZone";
+import ProfessorCard from "@/components/ProfessorCard";
 
 interface ParsedData {
   dates: Array<{ title: string; date?: string; event_type: string; is_high_stakes: boolean }>;
@@ -26,7 +29,9 @@ export default function ParseSyllabus() {
   const [parsing, setParsing] = useState(false);
   const [parsed, setParsed] = useState<ParsedData | null>(null);
   const [saving, setSaving] = useState(false);
-  const [dragActive, setDragActive] = useState(false);
+  const [profName, setProfName] = useState("");
+  const [profEmail, setProfEmail] = useState("");
+  const [officeHours, setOfficeHours] = useState("");
 
   useEffect(() => {
     supabase.from("courses").select("*").then(({ data }) => {
@@ -34,22 +39,25 @@ export default function ParseSyllabus() {
     });
   }, []);
 
+  // Load professor info when course changes
+  useEffect(() => {
+    if (!selectedCourse) return;
+    const course = courses.find(c => c.id === selectedCourse);
+    if (course) {
+      setProfName(course.professor_name || "");
+      setProfEmail(course.professor_email || "");
+      setOfficeHours(course.office_hours || "");
+    }
+  }, [selectedCourse, courses]);
+
   const handleFile = useCallback(async (file: File) => {
     if (file.type === "text/plain") {
       const text = await file.text();
       setSyllabusText(text);
     } else {
-      // Upload to storage and read back for now, or use text extraction
       toast({ title: "PDF/Image support", description: "Please paste your syllabus text for now. Full PDF parsing coming soon." });
     }
   }, []);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setDragActive(false);
-    const file = e.dataTransfer.files[0];
-    if (file) handleFile(file);
-  }, [handleFile]);
 
   const parseSyllabus = async () => {
     if (!syllabusText.trim()) return;
@@ -67,6 +75,16 @@ export default function ParseSyllabus() {
     } finally {
       setParsing(false);
     }
+  };
+
+  const saveProfessor = async () => {
+    if (!selectedCourse) return;
+    await supabase.from("courses").update({
+      professor_name: profName || null,
+      professor_email: profEmail || null,
+      office_hours: officeHours || null,
+    }).eq("id", selectedCourse);
+    toast({ title: "Professor info saved" });
   };
 
   const saveToDatabase = async () => {
@@ -88,6 +106,7 @@ export default function ParseSyllabus() {
           parsed.readings.map(r => ({ ...r, course_id: selectedCourse, user_id: user.id }))
         );
       }
+      await saveProfessor();
       toast({ title: "Saved!", description: "Syllabus data attached to course." });
     } catch (err: any) {
       toast({ title: "Save failed", description: err.message, variant: "destructive" });
@@ -101,6 +120,8 @@ export default function ParseSyllabus() {
     const map: Record<string, string> = { midterm: "warning", final: "destructive", quiz: "secondary", assignment: "default", project: "outline" };
     return <Badge variant={(map[type] || "secondary") as any} className="text-xs">{type}</Badge>;
   };
+
+  const selectedCourseData = courses.find(c => c.id === selectedCourse);
 
   return (
     <div>
@@ -116,89 +137,105 @@ export default function ParseSyllabus() {
             </SelectContent>
           </Select>
 
-          <div
-            onDragOver={e => { e.preventDefault(); setDragActive(true); }}
-            onDragLeave={() => setDragActive(false)}
-            onDrop={handleDrop}
-            className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${dragActive ? "border-primary bg-primary/5" : "border-border/50"}`}
-          >
-            <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
-            <p className="text-sm text-muted-foreground">Drag & drop a file, or paste text below</p>
-          </div>
-
-          <Textarea
-            value={syllabusText}
-            onChange={e => setSyllabusText(e.target.value)}
-            placeholder="Paste your syllabus text here..."
-            rows={10}
-            className="bg-secondary/30 border-border/50 font-mono text-xs"
+          <UploadZone
+            onFile={handleFile}
+            onTextChange={setSyllabusText}
+            text={syllabusText}
+            parsing={parsing}
+            parsed={!!parsed}
+            onParse={parseSyllabus}
           />
 
-          <Button onClick={parseSyllabus} disabled={parsing || !syllabusText.trim()} className="w-full gap-2">
-            {parsing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-            {parsing ? "Parsing with AI..." : "Parse Syllabus"}
-          </Button>
+          {/* Professor Info */}
+          {selectedCourse && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Professor Details</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Name</Label>
+                  <Input value={profName} onChange={e => setProfName(e.target.value)} placeholder="Dr. Smith" className="bg-secondary/30 border-border/30 text-sm" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Email</Label>
+                  <Input value={profEmail} onChange={e => setProfEmail(e.target.value)} placeholder="smith@uni.edu" className="bg-secondary/30 border-border/30 text-sm" />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Office Hours</Label>
+                <Input value={officeHours} onChange={e => setOfficeHours(e.target.value)} placeholder="Mon/Wed 2-4pm, Room 312" className="bg-secondary/30 border-border/30 text-sm" />
+              </div>
+            </motion.div>
+          )}
         </div>
 
-        {parsed && (
-          <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
-            <Card className="glass-card">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2"><FileText className="w-4 h-4" />Key Dates ({parsed.dates?.length || 0})</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 max-h-48 overflow-auto">
-                  {parsed.dates?.map((d, i) => (
-                    <div key={i} className="flex items-center justify-between text-sm py-1.5 border-b border-border/30 last:border-0">
-                      <span>{d.title}</span>
-                      <div className="flex items-center gap-2">
-                        {d.date && <span className="text-xs text-muted-foreground">{d.date}</span>}
-                        {eventTypeBadge(d.event_type, d.is_high_stakes)}
+        <div className="space-y-4">
+          {/* Professor Card preview */}
+          <ProfessorCard
+            professorName={profName}
+            professorEmail={profEmail}
+            officeHours={officeHours}
+          />
+
+          {parsed && (
+            <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
+              <Card className="glass-card">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm flex items-center gap-2"><FileText className="w-4 h-4" />Key Dates ({parsed.dates?.length || 0})</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2 max-h-48 overflow-auto">
+                    {parsed.dates?.map((d, i) => (
+                      <div key={i} className="flex items-center justify-between text-sm py-1.5 border-b border-border/30 last:border-0">
+                        <span>{d.title}</span>
+                        <div className="flex items-center gap-2">
+                          {d.date && <span className="text-xs text-muted-foreground">{d.date}</span>}
+                          {eventTypeBadge(d.event_type, d.is_high_stakes)}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
 
-            <Card className="glass-card">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Grading Breakdown</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {parsed.grading_weights?.map((w, i) => (
-                    <div key={i} className="flex items-center justify-between text-sm">
-                      <span>{w.category}</span>
-                      <span className="font-mono text-primary">{w.weight}%</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+              <Card className="glass-card">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm">Grading Breakdown</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {parsed.grading_weights?.map((w, i) => (
+                      <div key={i} className="flex items-center justify-between text-sm">
+                        <span>{w.category}</span>
+                        <span className="font-mono text-primary">{w.weight}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
 
-            <Card className="glass-card">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Readings ({parsed.readings?.length || 0})</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 max-h-40 overflow-auto">
-                  {parsed.readings?.map((r, i) => (
-                    <div key={i} className="text-sm py-1 border-b border-border/30 last:border-0">
-                      <p className="font-medium">{r.title}</p>
-                      {r.author && <p className="text-xs text-muted-foreground">{r.author}{r.chapter ? ` — ${r.chapter}` : ""}</p>}
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+              <Card className="glass-card">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm">Readings ({parsed.readings?.length || 0})</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2 max-h-40 overflow-auto">
+                    {parsed.readings?.map((r, i) => (
+                      <div key={i} className="text-sm py-1 border-b border-border/30 last:border-0">
+                        <p className="font-medium">{r.title}</p>
+                        {r.author && <p className="text-xs text-muted-foreground">{r.author}{r.chapter ? ` — ${r.chapter}` : ""}</p>}
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
 
-            <Button onClick={saveToDatabase} disabled={saving || !selectedCourse} className="w-full gap-2">
-              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-              {saving ? "Saving..." : "Save to Course"}
-            </Button>
-          </motion.div>
-        )}
+              <Button onClick={saveToDatabase} disabled={saving || !selectedCourse} className="w-full gap-2">
+                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                {saving ? "Saving..." : "Save to Course"}
+              </Button>
+            </motion.div>
+          )}
+        </div>
       </div>
     </div>
   );
