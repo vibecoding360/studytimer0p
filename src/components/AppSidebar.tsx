@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
-import { LayoutDashboard, Calendar, Calculator, Upload, BookOpen, Compass, LogOut, ChevronLeft, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Calendar, Calculator, Upload, BookOpen, Compass, LogOut, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -54,6 +54,22 @@ export default function AppSidebar() {
       </nav>
 
       <div className="mt-auto flex flex-col gap-1">
+        <button
+          onClick={() => document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }))}
+          className={cn(
+            "flex items-center gap-3 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-accent transition-all",
+            collapsed && "justify-center px-0"
+          )}
+          title="Search (⌘K)"
+        >
+          <Search className="w-4 h-4 shrink-0" />
+          {!collapsed && (
+            <>
+              <span>Search</span>
+              <kbd className="ml-auto text-[10px] font-mono bg-secondary px-1.5 py-0.5 rounded">⌘K</kbd>
+            </>
+          )}
+        </button>
         <Button
           variant="ghost"
           size="sm"

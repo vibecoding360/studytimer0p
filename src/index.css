@@ -91,15 +91,18 @@
 
 @layer utilities {
   .glass-card {
-    @apply bg-card/60 backdrop-blur-xl border border-border/50 shadow-lg;
+    @apply bg-card/50 backdrop-blur-xl border border-border/40 shadow-lg rounded-2xl;
   }
   .glass-card-hover {
-    @apply glass-card hover:bg-card/80 hover:border-border/70 transition-all duration-300;
+    @apply glass-card hover:bg-card/70 hover:border-border/60 hover:shadow-xl transition-all duration-300;
   }
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400;
   }
   .glow {
-    box-shadow: 0 0 20px hsl(234 89% 74% / 0.15), 0 0 60px hsl(234 89% 74% / 0.05);
+    box-shadow: 0 0 24px hsl(234 89% 74% / 0.12), 0 0 64px hsl(234 89% 74% / 0.04);
+  }
+  .glow-sm {
+    box-shadow: 0 0 12px hsl(234 89% 74% / 0.1);
   }
 }

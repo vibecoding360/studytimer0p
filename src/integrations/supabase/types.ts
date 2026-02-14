@@ -21,6 +21,9 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          office_hours: string | null
+          professor_email: string | null
+          professor_name: string | null
           semester: string | null
           updated_at: string
           user_id: string
@@ -31,6 +34,9 @@ export type Database = {
           created_at?: string
           id?: string
           name: string
+          office_hours?: string | null
+          professor_email?: string | null
+          professor_name?: string | null
           semester?: string | null
           updated_at?: string
           user_id: string
@@ -41,6 +47,9 @@ export type Database = {
           created_at?: string
           id?: string
           name?: string
+          office_hours?: string | null
+          professor_email?: string | null
+          professor_name?: string | null
           semester?: string | null
           updated_at?: string
           user_id?: string
