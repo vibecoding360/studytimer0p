@@ -11,6 +11,7 @@ import ParseSyllabus from "@/pages/ParseSyllabus";
 import SmartCalendar from "@/pages/SmartCalendar";
 import GradeCalculator from "@/pages/GradeCalculator";
 import StudyArchitect from "@/pages/StudyArchitect";
+import StudyTimer from "@/pages/StudyTimer";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +45,7 @@ const App = () => (
               <Route path="/calendar" element={<SmartCalendar />} />
               <Route path="/grades" element={<GradeCalculator />} />
               <Route path="/study-architect" element={<StudyArchitect />} />
+              <Route path="/timer" element={<StudyTimer />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
