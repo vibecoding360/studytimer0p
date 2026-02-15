@@ -265,6 +265,60 @@ export type Database = {
           },
         ]
       }
+      study_sessions: {
+        Row: {
+          commit_message: string | null
+          completed_at: string
+          course_id: string | null
+          created_at: string
+          duration_minutes: number
+          focus_score: number | null
+          id: string
+          mode: string
+          syllabus_item_id: string | null
+          user_id: string
+        }
+        Insert: {
+          commit_message?: string | null
+          completed_at?: string
+          course_id?: string | null
+          created_at?: string
+          duration_minutes: number
+          focus_score?: number | null
+          id?: string
+          mode?: string
+          syllabus_item_id?: string | null
+          user_id: string
+        }
+        Update: {
+          commit_message?: string | null
+          completed_at?: string
+          course_id?: string | null
+          created_at?: string
+          duration_minutes?: number
+          focus_score?: number | null
+          id?: string
+          mode?: string
+          syllabus_item_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_sessions_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_sessions_syllabus_item_id_fkey"
+            columns: ["syllabus_item_id"]
+            isOneToOne: false
+            referencedRelation: "syllabus_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       syllabus_dates: {
         Row: {
           course_id: string

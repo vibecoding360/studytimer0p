@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
-import { LayoutDashboard, Calendar, Calculator, Upload, BookOpen, Compass, LogOut, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { LayoutDashboard, Calendar, Calculator, Upload, BookOpen, Compass, LogOut, ChevronLeft, ChevronRight, Search, Timer } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,7 @@ const navItems = [
   { icon: Calendar, label: "Calendar", path: "/calendar" },
   { icon: Calculator, label: "Grade Calculator", path: "/grades" },
   { icon: Compass, label: "Study Architect", path: "/study-architect" },
+  { icon: Timer, label: "Deep Work Timer", path: "/timer" },
 ];
 
 export default function AppSidebar() {

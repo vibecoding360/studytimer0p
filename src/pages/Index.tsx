@@ -11,6 +11,8 @@ import { toast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import ProfessorCard from "@/components/ProfessorCard";
+import StudyHeatmap from "@/components/StudyHeatmap";
+import CourseTimeChart from "@/components/CourseTimeChart";
 
 interface Course {
   id: string;
@@ -159,6 +161,18 @@ export default function Dashboard() {
               </Card>
             </motion.div>
           ))}
+        </div>
+      )}
+
+      {/* Analytics Section */}
+      {courses.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+          <div className="glass-card rounded-2xl p-5">
+            <StudyHeatmap />
+          </div>
+          <div className="glass-card rounded-2xl p-5">
+            <CourseTimeChart />
+          </div>
         </div>
       )}
     </div>
