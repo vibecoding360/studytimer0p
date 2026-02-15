@@ -19,6 +19,7 @@ export type Database = {
           code: string | null
           color: string | null
           created_at: string
+          credits: number | null
           id: string
           name: string
           office_hours: string | null
@@ -32,6 +33,7 @@ export type Database = {
           code?: string | null
           color?: string | null
           created_at?: string
+          credits?: number | null
           id?: string
           name: string
           office_hours?: string | null
@@ -45,6 +47,7 @@ export type Database = {
           code?: string | null
           color?: string | null
           created_at?: string
+          credits?: number | null
           id?: string
           name?: string
           office_hours?: string | null
@@ -99,7 +102,10 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           display_name: string | null
+          email: string | null
           id: string
+          major: string | null
+          university_name: string | null
           updated_at: string
           user_id: string
         }
@@ -107,7 +113,10 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
+          email?: string | null
           id?: string
+          major?: string | null
+          university_name?: string | null
           updated_at?: string
           user_id: string
         }
@@ -115,7 +124,10 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
+          email?: string | null
           id?: string
+          major?: string | null
+          university_name?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -170,6 +182,7 @@ export type Database = {
           course_id: string
           created_at: string
           id: string
+          resource_link: string | null
           resource_type: string | null
           source: string | null
           title: string
@@ -181,6 +194,7 @@ export type Database = {
           course_id: string
           created_at?: string
           id?: string
+          resource_link?: string | null
           resource_type?: string | null
           source?: string | null
           title: string
@@ -192,6 +206,7 @@ export type Database = {
           course_id?: string
           created_at?: string
           id?: string
+          resource_link?: string | null
           resource_type?: string | null
           source?: string | null
           title?: string
@@ -291,9 +306,70 @@ export type Database = {
           },
         ]
       }
+      syllabus_items: {
+        Row: {
+          course_id: string
+          created_at: string
+          due_date: string | null
+          id: string
+          status: string
+          title: string
+          type: string
+          user_id: string
+          weight_percentage: number
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          status?: string
+          title: string
+          type?: string
+          user_id: string
+          weight_percentage?: number
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          status?: string
+          title?: string
+          type?: string
+          user_id?: string
+          weight_percentage?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "syllabus_items_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
-      [_ in never]: never
+      course_current_grades: {
+        Row: {
+          completed_weight: number | null
+          course_id: string | null
+          current_grade_percentage: number | null
+          total_weight: number | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "syllabus_items_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       [_ in never]: never
