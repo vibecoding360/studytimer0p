@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
-import { LayoutDashboard, Calendar, Calculator, Upload, BookOpen, Compass, LogOut, ChevronLeft, ChevronRight, Search, Timer } from "lucide-react";
+import { LayoutDashboard, BookOpen, LogOut, ChevronLeft, ChevronRight, Search, Timer } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -8,10 +8,6 @@ import { motion } from "framer-motion";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-  { icon: Upload, label: "Parse Syllabus", path: "/parse" },
-  { icon: Calendar, label: "Calendar", path: "/calendar" },
-  { icon: Calculator, label: "Grade Calculator", path: "/grades" },
-  { icon: Compass, label: "Study Architect", path: "/study-architect" },
   { icon: Timer, label: "Deep Work Timer", path: "/timer" },
 ];
 

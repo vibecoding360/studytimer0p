@@ -5,12 +5,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
-import { Plus, BookOpen, Calendar, TrendingUp, Search } from "lucide-react";
+import { Plus, BookOpen, Calendar, TrendingUp, Search, Trash2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import ProfessorCard from "@/components/ProfessorCard";
 import StudyHeatmap from "@/components/StudyHeatmap";
 import CourseTimeChart from "@/components/CourseTimeChart";
 
@@ -32,6 +41,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newCourse, setNewCourse] = useState({ name: "", code: "", semester: "" });
+  const [deletingCourse, setDeletingCourse] = useState<Course | null>(null);
 
   const fetchCourses = async () => {
     const { data, error } = await supabase
@@ -62,6 +72,18 @@ export default function Dashboard() {
       setDialogOpen(false);
       fetchCourses();
     }
+  };
+
+  const deleteCourse = async () => {
+    if (!deletingCourse) return;
+    const { error } = await supabase.from("courses").delete().eq("id", deletingCourse.id);
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Course deleted", description: `${deletingCourse.name} and all associated data have been removed.` });
+      fetchCourses();
+    }
+    setDeletingCourse(null);
   };
 
   return (
@@ -113,6 +135,31 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Study Activity — Top of Dashboard */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <Card className="rounded-2xl border-border/50 bg-card/80 backdrop-blur-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-semibold">Study Activity</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <StudyHeatmap />
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl border-border/50 bg-card/80 backdrop-blur-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-semibold">Focus Distribution</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CourseTimeChart />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Active Courses */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold tracking-tight">Active Courses</h2>
+      </div>
+
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3].map(i => (
@@ -132,18 +179,23 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {courses.map((course, i) => (
             <motion.div key={course.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06, ease: [0.25, 0.46, 0.45, 0.94] }}>
-              <Card
-                className="glass-card-hover cursor-pointer group rounded-2xl overflow-hidden"
-                onClick={() => navigate(`/parse?course=${course.id}`)}
-              >
+              <Card className="glass-card-hover group rounded-2xl overflow-hidden relative">
                 <div className="h-1 w-full" style={{ backgroundColor: course.color }} />
                 <CardHeader className="pb-2 pt-4">
                   <div className="flex items-center gap-3">
                     <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: course.color }} />
-                    <div>
+                    <div className="flex-1 min-w-0">
                       <CardTitle className="text-base group-hover:text-primary transition-colors">{course.name}</CardTitle>
                       {course.code && <p className="text-xs text-muted-foreground mt-0.5">{course.code}</p>}
                     </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+                      onClick={(e) => { e.stopPropagation(); setDeletingCourse(course); }}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-3">
@@ -164,17 +216,23 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Analytics Section */}
-      {courses.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-          <div className="glass-card rounded-2xl p-5">
-            <StudyHeatmap />
-          </div>
-          <div className="glass-card rounded-2xl p-5">
-            <CourseTimeChart />
-          </div>
-        </div>
-      )}
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deletingCourse} onOpenChange={(open) => { if (!open) setDeletingCourse(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Course</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete <span className="font-medium text-foreground">{deletingCourse?.name}</span> and all its associated syllabus data? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={deleteCourse} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
