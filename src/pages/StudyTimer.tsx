@@ -12,6 +12,7 @@ import { toast } from "@/hooks/use-toast";
 import TimerDisplay from "@/components/study-timer/TimerDisplay";
 import FocusRating from "@/components/study-timer/FocusRating";
 import SoundscapeToggle from "@/components/study-timer/SoundscapeToggle";
+import { soundscapeEngine } from "@/lib/soundscape-engine";
 
 interface Course {
   id: string;
@@ -25,7 +26,7 @@ interface SyllabusItem {
 
 type TimerMode = "pomodoro" | "deep-work" | "custom";
 type TimerState = "idle" | "running" | "paused" | "break" | "rating";
-type Soundscape = "off" | "white-noise" | "lofi" | "rain";
+
 
 const PRESETS: Record<TimerMode, { work: number; break: number; label: string }> = {
   pomodoro: { work: 25, break: 5, label: "Pomodoro (25/5)" },
@@ -40,13 +41,14 @@ export default function StudyTimer() {
   const [customBreak, setCustomBreak] = useState(10);
   const [autoBreak, setAutoBreak] = useState(true);
   const [autoNext, setAutoNext] = useState(false);
+  const [keepSoundDuringBreak, setKeepSoundDuringBreak] = useState(true);
   const [state, setState] = useState<TimerState>("idle");
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [totalTime, setTotalTime] = useState(25 * 60);
   const [isBreak, setIsBreak] = useState(false);
   const [round, setRound] = useState(1);
   const [commitMessage, setCommitMessage] = useState("");
-  const [soundscape, setSoundscape] = useState<Soundscape>("off");
+  
   const [courses, setCourses] = useState<Course[]>([]);
   const [syllabusItems, setSyllabusItems] = useState<SyllabusItem[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<string>("");
@@ -121,13 +123,16 @@ export default function StudyTimer() {
 
     if (isBreak) {
       setRound((r) => r + 1);
+      soundscapeEngine.resume();
       if (autoNext) {
         startTimer();
       } else {
         setState("idle");
+        soundscapeEngine.stop();
       }
     } else {
-      // Show rating then start break
+      // Pause audio during break unless user wants it
+      if (!keepSoundDuringBreak) soundscapeEngine.pause();
       setState("rating");
     }
   };
@@ -164,7 +169,13 @@ export default function StudyTimer() {
   };
 
   const togglePause = () => {
-    setState(state === "running" ? "paused" : "running");
+    const next = state === "running" ? "paused" : "running";
+    setState(next);
+    if (next === "paused") {
+      soundscapeEngine.pause();
+    } else {
+      soundscapeEngine.resume();
+    }
   };
 
   const resetTimer = () => {
@@ -173,6 +184,7 @@ export default function StudyTimer() {
     setTimeLeft(getWorkMinutes() * 60);
     setTotalTime(getWorkMinutes() * 60);
     setRound(1);
+    soundscapeEngine.stop();
   };
 
   // Request notification permission
@@ -228,7 +240,7 @@ export default function StudyTimer() {
             </div>
 
             <div className="flex items-center gap-4">
-              <SoundscapeToggle active={soundscape} onChange={setSoundscape} />
+              <SoundscapeToggle />
               <span className="text-xs text-muted-foreground">Round {round}</span>
             </div>
           </motion.div>
@@ -293,6 +305,10 @@ export default function StudyTimer() {
                 <Label className="text-sm">Auto-start next round</Label>
                 <Switch checked={autoNext} onCheckedChange={setAutoNext} />
               </div>
+              <div className="flex items-center justify-between">
+                <Label className="text-sm">Keep sound during breaks</Label>
+                <Switch checked={keepSoundDuringBreak} onCheckedChange={setKeepSoundDuringBreak} />
+              </div>
             </div>
 
             {/* Session labeling */}
@@ -334,7 +350,7 @@ export default function StudyTimer() {
             {/* Soundscape */}
             <div className="space-y-2">
               <Label className="text-xs uppercase tracking-wider text-muted-foreground">Soundscape</Label>
-              <SoundscapeToggle active={soundscape} onChange={setSoundscape} />
+              <SoundscapeToggle />
             </div>
 
             {/* Start */}
