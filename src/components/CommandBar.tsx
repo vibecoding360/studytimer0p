@@ -10,13 +10,14 @@ import {
   CommandItem,
   CommandSeparator,
 } from "@/components/ui/command";
-import { LayoutDashboard, Calendar, Calculator, Upload, Compass, BookOpen, Search } from "lucide-react";
+import { LayoutDashboard, Calendar, Calculator, Upload, Compass, Zap, Timer } from "lucide-react";
 
 const pages = [
   { label: "Dashboard", path: "/", icon: LayoutDashboard },
-  { label: "Parse Syllabus", path: "/parse", icon: Upload },
+  { label: "Mastery Hub", path: "/timer", icon: Zap },
+  { label: "Upload Roadmap", path: "/parse", icon: Upload },
   { label: "Smart Calendar", path: "/calendar", icon: Calendar },
-  { label: "Grade Calculator", path: "/grades", icon: Calculator },
+  { label: "Grade Simulator", path: "/grades", icon: Calculator },
   { label: "Study Architect", path: "/study-architect", icon: Compass },
 ];
 
@@ -58,7 +59,7 @@ export default function CommandBar() {
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
-      <CommandInput placeholder="Search pages, courses..." />
+      <CommandInput placeholder="Search pages, mastery tracks..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Pages">
@@ -75,7 +76,7 @@ export default function CommandBar() {
         {courses.length > 0 && (
           <>
             <CommandSeparator />
-            <CommandGroup heading="Courses">
+            <CommandGroup heading="Mastery Tracks">
               {courses.map(c => (
                 <CommandItem key={c.id} onSelect={() => go(`/parse?course=${c.id}`)} className="gap-3 cursor-pointer">
                   <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: c.color }} />

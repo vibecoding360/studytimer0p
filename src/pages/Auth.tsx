@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
-import { BookOpen, ArrowRight } from "lucide-react";
+import { Zap, ArrowRight } from "lucide-react";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -44,24 +44,24 @@ export default function Auth() {
         className="w-full max-w-md"
       >
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 mb-4">
-            <BookOpen className="w-6 h-6 text-primary" />
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-success/15 mb-4">
+            <Zap className="w-6 h-6 text-success" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Syllabus Command</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Your AI-powered semester architect</p>
+          <h1 className="text-2xl font-bold tracking-tight">StudySync</h1>
+          <p className="text-muted-foreground mt-1 text-sm">Your premium success & mastery engine</p>
         </div>
 
         <div className="glass-card rounded-2xl p-8">
           <div className="flex gap-1 mb-6 p-1 rounded-lg bg-secondary/50">
             <button
               onClick={() => setIsLogin(true)}
-              className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${isLogin ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+              className={`flex-1 py-2 text-sm font-medium rounded-md transition-all duration-200 ${isLogin ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
             >
               Sign In
             </button>
             <button
               onClick={() => setIsLogin(false)}
-              className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${!isLogin ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+              className={`flex-1 py-2 text-sm font-medium rounded-md transition-all duration-200 ${!isLogin ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
             >
               Sign Up
             </button>
