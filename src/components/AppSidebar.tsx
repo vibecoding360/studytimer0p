@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
-import { LayoutDashboard, BookOpen, LogOut, ChevronLeft, ChevronRight, Search, Timer } from "lucide-react";
+import { LayoutDashboard, Zap, LogOut, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-  { icon: Timer, label: "Deep Work Timer", path: "/timer" },
+  { icon: Zap, label: "Mastery Hub", path: "/timer" },
 ];
 
 export default function AppSidebar() {
@@ -22,11 +22,11 @@ export default function AppSidebar() {
       transition={{ duration: 0.2, ease: "easeInOut" }}
       className="h-screen sticky top-0 flex flex-col border-r border-border/50 bg-sidebar p-3 gap-1"
     >
-      <div className={cn("flex items-center gap-2 px-2 py-3 mb-2", collapsed && "justify-center")}>
-        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-          <BookOpen className="w-4 h-4 text-primary" />
+      <div className={cn("flex items-center gap-2.5 px-2 py-3 mb-2", collapsed && "justify-center")}>
+        <div className="w-8 h-8 rounded-lg bg-success/15 flex items-center justify-center shrink-0">
+          <Zap className="w-4 h-4 text-success" />
         </div>
-        {!collapsed && <span className="font-semibold text-sm tracking-tight">Syllabus Command</span>}
+        {!collapsed && <span className="font-bold text-sm tracking-tight">StudySync</span>}
       </div>
 
       <nav className="flex-1 flex flex-col gap-0.5">
@@ -37,7 +37,7 @@ export default function AppSidebar() {
               key={path}
               to={path}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
+                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
                 active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-accent",
                 collapsed && "justify-center px-0"
               )}

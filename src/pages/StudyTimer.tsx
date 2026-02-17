@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Play, Pause, RotateCcw, Timer } from "lucide-react";
+import { Play, Pause, RotateCcw, Zap } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import TimerDisplay from "@/components/study-timer/TimerDisplay";
 import FocusRating from "@/components/study-timer/FocusRating";
@@ -26,7 +26,6 @@ interface SyllabusItem {
 
 type TimerMode = "pomodoro" | "deep-work" | "custom";
 type TimerState = "idle" | "running" | "paused" | "break" | "rating";
-
 
 const PRESETS: Record<TimerMode, { work: number; break: number; label: string }> = {
   pomodoro: { work: 25, break: 5, label: "Pomodoro (25/5)" },
@@ -56,14 +55,12 @@ export default function StudyTimer() {
   const [emergencyUsed, setEmergencyUsed] = useState<number | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Fetch courses
   useEffect(() => {
     supabase.from("courses").select("id, name").then(({ data }) => {
       if (data) setCourses(data);
     });
   }, []);
 
-  // Fetch syllabus items when course changes
   useEffect(() => {
     if (!selectedCourse) { setSyllabusItems([]); return; }
     supabase.from("syllabus_items").select("id, title").eq("course_id", selectedCourse).then(({ data }) => {
@@ -90,7 +87,6 @@ export default function StudyTimer() {
     setState("running");
   }, [mode, customBreak]);
 
-  // Timer tick
   useEffect(() => {
     if (state !== "running") {
       if (intervalRef.current) clearInterval(intervalRef.current);
@@ -110,7 +106,6 @@ export default function StudyTimer() {
   }, [state]);
 
   const handleTimerEnd = () => {
-    // Desktop notification
     if (Notification.permission === "granted") {
       new Notification(isBreak ? "Break over! Time to focus." : "Session complete! Take a break.", {
         icon: "/favicon.ico",
@@ -131,7 +126,6 @@ export default function StudyTimer() {
         soundscapeEngine.stop();
       }
     } else {
-      // Pause audio during break unless user wants it
       if (!keepSoundDuringBreak) soundscapeEngine.pause();
       setState("rating");
     }
@@ -187,7 +181,6 @@ export default function StudyTimer() {
     soundscapeEngine.stop();
   };
 
-  // Request notification permission
   useEffect(() => {
     if ("Notification" in window && Notification.permission === "default") {
       Notification.requestPermission();
@@ -210,7 +203,6 @@ export default function StudyTimer() {
             <FocusRating onRate={saveSession} />
           </motion.div>
         ) : isFocusMode ? (
-          /* ===== FOCUS MODE ===== */
           <motion.div
             key="focus"
             initial={{ opacity: 0 }}
@@ -245,7 +237,6 @@ export default function StudyTimer() {
             </div>
           </motion.div>
         ) : (
-          /* ===== SETUP MODE ===== */
           <motion.div
             key="setup"
             initial={{ opacity: 0, y: 12 }}
@@ -255,8 +246,8 @@ export default function StudyTimer() {
           >
             <div>
               <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                <Timer className="w-6 h-6 text-[hsl(160,100%,50%)]" />
-                Deep Work Timer
+                <Zap className="w-6 h-6 text-success" />
+                Mastery Hub
               </h1>
               <p className="text-muted-foreground text-sm mt-1">Lock in and build momentum</p>
             </div>
@@ -269,9 +260,9 @@ export default function StudyTimer() {
                   <button
                     key={m}
                     onClick={() => setMode(m)}
-                    className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all border ${
+                    className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border ${
                       mode === m
-                        ? "border-[hsl(160,100%,50%)] bg-[hsl(160,100%,50%,0.1)] text-foreground"
+                        ? "border-success bg-success/10 text-foreground"
                         : "border-border/30 text-muted-foreground hover:border-border"
                     }`}
                   >
@@ -281,7 +272,6 @@ export default function StudyTimer() {
               </div>
             </div>
 
-            {/* Custom duration */}
             {mode === "custom" && (
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
@@ -313,9 +303,9 @@ export default function StudyTimer() {
 
             {/* Session labeling */}
             <div className="space-y-3">
-              <Label className="text-xs uppercase tracking-wider text-muted-foreground">Link to</Label>
+              <Label className="text-xs uppercase tracking-wider text-muted-foreground">Link to Mastery Track</Label>
               <Select value={selectedCourse} onValueChange={(v) => { setSelectedCourse(v); setSelectedItem(""); }}>
-                <SelectTrigger><SelectValue placeholder="Select a course (optional)" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Select a track (optional)" /></SelectTrigger>
                 <SelectContent>
                   {courses.map((c) => (
                     <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
@@ -324,7 +314,7 @@ export default function StudyTimer() {
               </Select>
               {syllabusItems.length > 0 && (
                 <Select value={selectedItem} onValueChange={setSelectedItem}>
-                  <SelectTrigger><SelectValue placeholder="Select a syllabus item (optional)" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder="Select a milestone (optional)" /></SelectTrigger>
                   <SelectContent>
                     {syllabusItems.map((s) => (
                       <SelectItem key={s.id} value={s.id}>{s.title}</SelectItem>
@@ -334,7 +324,7 @@ export default function StudyTimer() {
               )}
             </div>
 
-            {/* Commit message */}
+            {/* Commit message / One Thing */}
             <div className="space-y-1.5">
               <Label className="text-xs uppercase tracking-wider text-muted-foreground">
                 The ONE thing you'll finish this session
@@ -356,7 +346,7 @@ export default function StudyTimer() {
             {/* Start */}
             <Button
               onClick={startTimer}
-              className="w-full h-12 text-base font-semibold bg-[hsl(160,100%,40%)] hover:bg-[hsl(160,100%,35%)] text-black rounded-xl"
+              className="w-full h-12 text-base font-semibold bg-success hover:bg-success/90 text-success-foreground rounded-xl"
             >
               Start Focus Session
             </Button>

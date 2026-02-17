@@ -29,13 +29,13 @@ export default function TimerDisplay({ timeLeft, totalTime, isBreak, commitMessa
           <motion.circle
             cx="150" cy="150" r="140"
             fill="none"
-            stroke={isBreak ? "hsl(var(--success))" : "hsl(160, 100%, 50%)"}
+            stroke="hsl(var(--success))"
             strokeWidth="3"
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
             style={{
-              filter: `drop-shadow(0 0 12px ${isBreak ? 'hsl(142, 76%, 36%)' : 'hsl(160, 100%, 50%)'})`,
+              filter: `drop-shadow(0 0 12px hsl(var(--success)))`,
             }}
             transition={{ duration: 0.5, ease: "linear" }}
           />
@@ -45,7 +45,7 @@ export default function TimerDisplay({ timeLeft, totalTime, isBreak, commitMessa
         <motion.div
           className="absolute inset-0 rounded-full"
           style={{
-            background: `radial-gradient(circle, ${isBreak ? 'hsl(142 76% 36% / 0.05)' : 'hsl(160 100% 50% / 0.04)'} 0%, transparent 70%)`,
+            background: `radial-gradient(circle, hsl(var(--success) / 0.05) 0%, transparent 70%)`,
           }}
           animate={{ opacity: [0.3, 0.6, 0.3] }}
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
