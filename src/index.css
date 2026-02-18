@@ -105,4 +105,26 @@
   .glow-sm {
     box-shadow: 0 0 12px hsl(234 89% 67% / 0.1);
   }
+  /* M3 touch targets */
+  .touch-target {
+    @apply min-w-[48px] min-h-[48px];
+  }
+  /* Safe area for bottom nav */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  /* M3 snackbar style */
+  .m3-snackbar {
+    @apply fixed bottom-20 left-4 right-4 md:bottom-6 md:left-auto md:right-6 md:w-auto md:min-w-[320px] z-[100] bg-foreground text-background rounded-xl px-4 py-3 text-sm font-medium shadow-xl;
+  }
+  /* Swipeable card */
+  .swipe-card {
+    touch-action: pan-y;
+    will-change: transform;
+  }
+  /* GPU-accelerated transitions */
+  .gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform, opacity;
+  }
 }

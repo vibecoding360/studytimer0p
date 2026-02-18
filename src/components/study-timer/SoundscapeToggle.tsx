@@ -36,7 +36,7 @@ export default function SoundscapeToggle() {
             onClick={() => soundscapeEngine.play(id)}
             title={label}
             className={cn(
-              "p-2 rounded-md transition-all text-muted-foreground",
+              "p-2 rounded-md transition-all text-muted-foreground touch-target flex items-center justify-center",
               active === id && "bg-primary/20 text-primary shadow-sm"
             )}
           >
