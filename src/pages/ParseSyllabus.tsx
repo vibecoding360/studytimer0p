@@ -6,11 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Check, FileText, Loader2 } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import UploadZone from "@/components/UploadZone";
 import ProfessorCard from "@/components/ProfessorCard";
 
@@ -22,6 +23,7 @@ interface ParsedData {
 
 export default function ParseSyllabus() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [courses, setCourses] = useState<any[]>([]);
   const [selectedCourse, setSelectedCourse] = useState(searchParams.get("course") || "");
@@ -39,7 +41,6 @@ export default function ParseSyllabus() {
     });
   }, []);
 
-  // Load professor info when course changes
   useEffect(() => {
     if (!selectedCourse) return;
     const course = courses.find(c => c.id === selectedCourse);
@@ -55,7 +56,7 @@ export default function ParseSyllabus() {
       const text = await file.text();
       setSyllabusText(text);
     } else {
-      toast({ title: "PDF/Image support", description: "Please paste your syllabus text for now. Full PDF parsing coming soon." });
+      toast.error("Please paste your syllabus text for now. Full PDF parsing coming soon.");
     }
   }, []);
 
@@ -69,9 +70,9 @@ export default function ParseSyllabus() {
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       setParsed(data);
-      toast({ title: "Syllabus parsed!", description: `Found ${data.dates?.length || 0} dates, ${data.grading_weights?.length || 0} weights, ${data.readings?.length || 0} readings.` });
+      toast.success(`Found ${data.dates?.length || 0} dates, ${data.grading_weights?.length || 0} weights, ${data.readings?.length || 0} readings.`);
     } catch (err: any) {
-      toast({ title: "Parse failed", description: err.message, variant: "destructive" });
+      toast.error(err.message || "Parse failed");
     } finally {
       setParsing(false);
     }
@@ -84,7 +85,6 @@ export default function ParseSyllabus() {
       professor_email: profEmail || null,
       office_hours: officeHours || null,
     }).eq("id", selectedCourse);
-    toast({ title: "Professor info saved" });
   };
 
   const saveToDatabase = async () => {
@@ -92,24 +92,30 @@ export default function ParseSyllabus() {
     setSaving(true);
     try {
       if (parsed.dates?.length) {
-        await supabase.from("syllabus_dates").insert(
+        const res = await supabase.from("syllabus_dates").insert(
           parsed.dates.map(d => ({ ...d, course_id: selectedCourse, user_id: user.id }))
         );
+        if (res.error) throw res.error;
       }
       if (parsed.grading_weights?.length) {
-        await supabase.from("grading_weights").insert(
+        const res = await supabase.from("grading_weights").insert(
           parsed.grading_weights.map(w => ({ ...w, course_id: selectedCourse, user_id: user.id }))
         );
+        if (res.error) throw res.error;
       }
       if (parsed.readings?.length) {
-        await supabase.from("readings").insert(
+        const res = await supabase.from("readings").insert(
           parsed.readings.map(r => ({ ...r, course_id: selectedCourse, user_id: user.id }))
         );
+        if (res.error) throw res.error;
       }
+
       await saveProfessor();
-      toast({ title: "Saved!", description: "Syllabus data attached to course." });
+
+      toast.success("Mastery Roadmap Saved Successfully");
+      setTimeout(() => navigate("/"), 600);
     } catch (err: any) {
-      toast({ title: "Save failed", description: err.message, variant: "destructive" });
+      toast.error(err.message || "Save failed");
     } finally {
       setSaving(false);
     }
@@ -121,17 +127,17 @@ export default function ParseSyllabus() {
     return <Badge variant={(map[type] || "secondary") as any} className="text-xs">{type}</Badge>;
   };
 
-  const selectedCourseData = courses.find(c => c.id === selectedCourse);
+  const saveDisabled = saving || !selectedCourse;
 
   return (
     <div>
-      <h1 className="text-2xl font-bold tracking-tight mb-1">AI Syllabus Parser</h1>
-      <p className="text-muted-foreground text-sm mb-6">Upload or paste your syllabus to extract structured data</p>
+      <h1 className="text-2xl font-bold tracking-tight mb-1">AI Roadmap Parser</h1>
+      <p className="text-muted-foreground text-sm mb-6">Upload or paste your roadmap to extract structured data</p>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-4">
           <Select value={selectedCourse} onValueChange={setSelectedCourse}>
-            <SelectTrigger><SelectValue placeholder="Select a course" /></SelectTrigger>
+            <SelectTrigger><SelectValue placeholder="Select a Mastery Track" /></SelectTrigger>
             <SelectContent>
               {courses.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
             </SelectContent>
@@ -146,9 +152,8 @@ export default function ParseSyllabus() {
             onParse={parseSyllabus}
           />
 
-          {/* Professor Info */}
           {selectedCourse && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="space-y-3">
               <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Professor Details</p>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
@@ -169,15 +174,10 @@ export default function ParseSyllabus() {
         </div>
 
         <div className="space-y-4">
-          {/* Professor Card preview */}
-          <ProfessorCard
-            professorName={profName}
-            professorEmail={profEmail}
-            officeHours={officeHours}
-          />
+          <ProfessorCard professorName={profName} professorEmail={profEmail} officeHours={officeHours} />
 
           {parsed && (
-            <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
+            <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }} className="space-y-4">
               <Card className="glass-card">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm flex items-center gap-2"><FileText className="w-4 h-4" />Key Dates ({parsed.dates?.length || 0})</CardTitle>
@@ -229,10 +229,21 @@ export default function ParseSyllabus() {
                 </CardContent>
               </Card>
 
-              <Button onClick={saveToDatabase} disabled={saving || !selectedCourse} className="w-full gap-2">
-                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-                {saving ? "Saving..." : "Save to Course"}
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="w-full inline-block">
+                    <Button onClick={saveToDatabase} disabled={saveDisabled} className="w-full gap-2">
+                      {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                      {saving ? "Saving..." : "Save to Mastery Track"}
+                    </Button>
+                  </span>
+                </TooltipTrigger>
+                {!selectedCourse && (
+                  <TooltipContent>
+                    <p>Please select a Mastery Track first</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
             </motion.div>
           )}
         </div>
