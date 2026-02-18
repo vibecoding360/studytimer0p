@@ -111,6 +111,10 @@ export default function StudyTimer() {
         icon: "/favicon.ico",
       });
     }
+    // Haptic feedback when timer finishes
+    if ("vibrate" in navigator) {
+      navigator.vibrate(isBreak ? [25] : [50, 30, 50]);
+    }
     toast({
       title: isBreak ? "Break's over!" : "🎉 Session complete!",
       description: isBreak ? "Ready for another round?" : "Great focus work.",
@@ -218,10 +222,10 @@ export default function StudyTimer() {
             />
 
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" onClick={togglePause} className="w-12 h-12 rounded-full border border-border/30">
+              <Button variant="ghost" size="icon" onClick={togglePause} className="w-14 h-14 rounded-full border border-border/30 touch-target">
                 {state === "running" ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
               </Button>
-              <Button variant="ghost" size="icon" onClick={resetTimer} className="w-10 h-10 rounded-full">
+              <Button variant="ghost" size="icon" onClick={resetTimer} className="w-12 h-12 rounded-full touch-target">
                 <RotateCcw className="w-4 h-4" />
               </Button>
               {!isBreak && (
@@ -346,7 +350,7 @@ export default function StudyTimer() {
             {/* Start */}
             <Button
               onClick={startTimer}
-              className="w-full h-12 text-base font-semibold bg-success hover:bg-success/90 text-success-foreground rounded-xl"
+              className="w-full h-14 text-base font-semibold bg-success hover:bg-success/90 text-success-foreground rounded-xl touch-target"
             >
               Start Focus Session
             </Button>
