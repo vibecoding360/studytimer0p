@@ -1,10 +1,15 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import { LayoutDashboard, Zap, LogOut, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -13,8 +18,16 @@ const navItems = [
 
 export default function AppSidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const [showSignOutDialog, setShowSignOutDialog] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("You have been securely signed out.");
+    navigate("/auth");
+  };
 
   return (
     <motion.aside
@@ -77,17 +90,35 @@ export default function AppSidebar() {
         </Button>
         {user && (
           <button
-            onClick={() => signOut()}
+            onClick={() => setShowSignOutDialog(true)}
             className={cn(
-              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-all",
+              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all",
               collapsed && "justify-center px-0"
             )}
+            title={collapsed ? "Sign Out" : undefined}
           >
             <LogOut className="w-4 h-4 shrink-0" />
             {!collapsed && <span>Sign Out</span>}
           </button>
         )}
       </div>
+
+      <AlertDialog open={showSignOutDialog} onOpenChange={setShowSignOutDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to sign out?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Any active Deep Work session will be lost. You can sign back in anytime.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSignOut} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Sign Out
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </motion.aside>
   );
 }
