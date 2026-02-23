@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Plus, Zap, Calendar, TrendingUp, Search, Trash2, Loader2 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Plus, Zap, Calendar, TrendingUp, Search, Trash2, Loader2, Repeat, Target } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from "framer-motion";
 import StudyHeatmap from "@/components/StudyHeatmap";
@@ -16,6 +17,7 @@ import BottomSheet from "@/components/BottomSheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usePullToRefresh } from "@/hooks/use-pull-to-refresh";
 import { triggerHaptic } from "@/lib/haptics";
+import { buildGoalEngine, generateReviewQueue, generateTodayPlan, PlanItem, ReviewItem } from "@/lib/planning";
 
 interface Course {
   id: string;
@@ -64,21 +66,24 @@ function SwipeableCourseCard({ course, onDelete }: { course: Course; onDelete: (
               variant="ghost"
               size="icon"
               className="h-12 w-12 touch-target opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-muted-foreground hover:text-destructive hidden md:flex"
-              onClick={(e) => { e.stopPropagation(); onDelete(course); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(course);
+              }}
             >
               <Trash2 className="w-4 h-4" />
             </Button>
           </div>
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             {course.semester && <span>{course.semester}</span>}
-            <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />Milestones</span>
-            <span className="flex items-center gap-1"><TrendingUp className="w-3 h-3" />Progress</span>
+            <span className="flex items-center gap-1">
+              <Calendar className="w-3 h-3" />Milestones
+            </span>
+            <span className="flex items-center gap-1">
+              <TrendingUp className="w-3 h-3" />Progress
+            </span>
           </div>
-          {course.professor_name && (
-            <p className="text-xs text-muted-foreground border-t border-border/30 pt-3 mt-3">
-              Prof. {course.professor_name}
-            </p>
-          )}
+          {course.professor_name && <p className="text-xs text-muted-foreground border-t border-border/30 pt-3 mt-3">Prof. {course.professor_name}</p>}
         </Card>
       </motion.div>
     </div>
@@ -93,19 +98,45 @@ export default function Dashboard() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newCourse, setNewCourse] = useState({ name: "", code: "", semester: "" });
   const [deletingCourse, setDeletingCourse] = useState<Course | null>(null);
+  const [todayPlan, setTodayPlan] = useState<PlanItem[]>([]);
+  const [reviewQueue, setReviewQueue] = useState<ReviewItem[]>([]);
+  const [goalSnapshot, setGoalSnapshot] = useState<ReturnType<typeof buildGoalEngine> | null>(null);
 
   const fetchCourses = useCallback(async () => {
-    const { data, error } = await supabase
-      .from("courses")
-      .select("*")
-      .order("created_at", { ascending: false });
+    const { data, error } = await supabase.from("courses").select("*").order("created_at", { ascending: false });
     if (!error && data) setCourses(data);
     setLoading(false);
   }, []);
 
   const { containerRef, refreshing } = usePullToRefresh(fetchCourses);
 
-  useEffect(() => { fetchCourses(); }, [fetchCourses]);
+  useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses]);
+
+  useEffect(() => {
+    const loadInsights = async () => {
+      if (!user) return;
+      const [eventsRes, gradesRes, roadmapRes, sessionsRes] = await Promise.all([
+        supabase.from("syllabus_dates").select("id,title,date,is_high_stakes,course_id"),
+        supabase.from("grading_weights").select("id,category,current_score,weight,course_id"),
+        supabase.from("study_roadmap").select("id,course_id,week_number,tasks,focus_area"),
+        supabase
+          .from("study_sessions")
+          .select("id,completed_at,duration_minutes,mode,commit_message,syllabus_item_id")
+          .order("completed_at", { ascending: false })
+          .limit(60),
+      ]);
+
+      const events = eventsRes.data ?? [];
+      const sessions = sessionsRes.data ?? [];
+      setTodayPlan(generateTodayPlan({ events, categories: gradesRes.data ?? [], roadmap: roadmapRes.data ?? [], courses }));
+      setReviewQueue(generateReviewQueue({ sessions, pastSyllabusEvents: events, courses }));
+      setGoalSnapshot(buildGoalEngine(sessions));
+    };
+
+    loadInsights();
+  }, [user, courses]);
 
   const addCourse = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -142,15 +173,14 @@ export default function Dashboard() {
   };
 
   return (
-    <div ref={containerRef}>
-      {/* Pull-to-refresh indicator */}
+    <div ref={containerRef} className="pb-28 md:pb-8">
       <AnimatePresence>
         {refreshing && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 48 }}
-            exit={{ opacity: 0, height: 0 }}
-            className="flex items-center justify-center"
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-card border border-border/50 shadow-lg rounded-full px-4 py-2 flex items-center justify-center"
           >
             <Loader2 className="w-5 h-5 animate-spin text-primary" />
           </motion.div>
@@ -178,38 +208,98 @@ export default function Dashboard() {
           </Button>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" className="gap-2 touch-target"><Plus className="w-4 h-4" />Add Track</Button>
+              <Button size="sm" className="gap-2 touch-target">
+                <Plus className="w-4 h-4" />Add Track
+              </Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader><DialogTitle>New Mastery Track</DialogTitle></DialogHeader>
+              <DialogHeader>
+                <DialogTitle>New Mastery Track</DialogTitle>
+              </DialogHeader>
               <form onSubmit={addCourse} className="space-y-4">
                 <div className="space-y-2">
                   <Label>Track Name</Label>
-                  <Input value={newCourse.name} onChange={e => setNewCourse(p => ({ ...p, name: e.target.value }))} placeholder="Advanced Econometrics" required className="h-12" />
+                  <Input value={newCourse.name} onChange={(e) => setNewCourse((p) => ({ ...p, name: e.target.value }))} placeholder="Advanced Econometrics" required className="h-12" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Code</Label>
-                    <Input value={newCourse.code} onChange={e => setNewCourse(p => ({ ...p, code: e.target.value }))} placeholder="ECON 420" className="h-12" />
+                    <Input value={newCourse.code} onChange={(e) => setNewCourse((p) => ({ ...p, code: e.target.value }))} placeholder="ECON 420" className="h-12" />
                   </div>
                   <div className="space-y-2">
                     <Label>Semester</Label>
-                    <Input value={newCourse.semester} onChange={e => setNewCourse(p => ({ ...p, semester: e.target.value }))} placeholder="Spring 2026" className="h-12" />
+                    <Input value={newCourse.semester} onChange={(e) => setNewCourse((p) => ({ ...p, semester: e.target.value }))} placeholder="Spring 2026" className="h-12" />
                   </div>
                 </div>
-                <Button type="submit" className="w-full h-12">Create Track</Button>
+                <Button type="submit" className="w-full h-12">
+                  Create Track
+                </Button>
               </form>
             </DialogContent>
           </Dialog>
         </div>
       </div>
 
-      {/* Deep Work Timer — Top of Dashboard */}
       <div className="mb-8">
         <DashboardTimer />
       </div>
 
-      {/* Study Activity */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+        <Card className="rounded-2xl border-border/50 bg-card/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="text-base font-semibold flex items-center gap-2"><Calendar className="w-4 h-4" />Today&apos;s Plan</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {todayPlan.length ? todayPlan.map((item) => (
+              <div key={item.id} className="rounded-xl border border-border/40 p-3">
+                <p className="text-sm font-medium">{item.title}</p>
+                <p className="text-xs text-muted-foreground mt-1">{item.detail}</p>
+              </div>
+            )) : <p className="text-sm text-muted-foreground">Add syllabus dates, grading data, and roadmap tasks to auto-generate your plan.</p>}
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-2xl border-border/50 bg-card/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="text-base font-semibold flex items-center gap-2"><Repeat className="w-4 h-4" />Review Queue</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {reviewQueue.length ? reviewQueue.map((item) => (
+              <div key={item.id} className="rounded-xl border border-border/40 p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-sm font-medium truncate">{item.title}</p>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${item.isDueNow ? "bg-warning/20 text-warning" : "bg-secondary text-muted-foreground"}`}>{item.stageLabel}</span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">{item.isDueNow ? "Due now" : `Due ${new Date(item.dueAt).toLocaleDateString()}`}</p>
+              </div>
+            )) : <p className="text-sm text-muted-foreground">Complete sessions to start a spaced-repetition queue (1d, 3d, 7d, 14d).</p>}
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-2xl border-border/50 bg-card/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="text-base font-semibold flex items-center gap-2"><Target className="w-4 h-4" />Goal Engine + Streak</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {goalSnapshot?.goals.map((goal) => (
+              <div key={goal.label} className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span>{goal.label}</span>
+                  <span className="font-mono">{goal.current}/{goal.target}</span>
+                </div>
+                <Progress value={Math.min((goal.current / goal.target) * 100, 100)} className="h-2" />
+              </div>
+            ))}
+            <div className="rounded-xl border border-border/40 p-3">
+              <p className="text-sm font-medium">{goalSnapshot?.streakDays ?? 0}-day streak</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {goalSnapshot?.recoveryAvailable ? "Recovery token available: miss one day without breaking your contract." : "Stay active today to protect your streak contract."}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <Card className="rounded-2xl border-border/50 bg-card/80 backdrop-blur-sm p-6">
           <CardHeader className="pb-2 p-0 mb-4">
@@ -229,7 +319,6 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      {/* Mastery Tracks */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold tracking-tight">Mastery Tracks</h2>
         <p className="text-xs text-muted-foreground md:hidden">← swipe to delete</p>
@@ -237,7 +326,7 @@ export default function Dashboard() {
 
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {[1, 2, 3].map(i => (
+          {[1, 2, 3].map((i) => (
             <div key={i} className="h-44 rounded-2xl bg-secondary/20 animate-pulse" />
           ))}
         </div>
@@ -248,7 +337,9 @@ export default function Dashboard() {
           </div>
           <h2 className="text-lg font-semibold mb-2">No mastery tracks yet</h2>
           <p className="text-muted-foreground text-sm mb-6">Add your first track to begin</p>
-          <Button onClick={() => setDialogOpen(true)} className="gap-2 touch-target"><Plus className="w-4 h-4" />Add Track</Button>
+          <Button onClick={() => setDialogOpen(true)} className="gap-2 touch-target">
+            <Plus className="w-4 h-4" />Add Track
+          </Button>
         </motion.div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -260,11 +351,12 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Delete Confirmation — Bottom Sheet on mobile, AlertDialog on desktop */}
       {isMobile ? (
         <BottomSheet
           open={!!deletingCourse}
-          onOpenChange={(open) => { if (!open) setDeletingCourse(null); }}
+          onOpenChange={(open) => {
+            if (!open) setDeletingCourse(null);
+          }}
           title="Remove Mastery Track"
           description={`Are you sure you want to remove ${deletingCourse?.name} and all associated milestones? This action cannot be undone.`}
         >
@@ -278,7 +370,12 @@ export default function Dashboard() {
           </div>
         </BottomSheet>
       ) : (
-        <Dialog open={!!deletingCourse} onOpenChange={(open) => { if (!open) setDeletingCourse(null); }}>
+        <Dialog
+          open={!!deletingCourse}
+          onOpenChange={(open) => {
+            if (!open) setDeletingCourse(null);
+          }}
+        >
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Remove Mastery Track</DialogTitle>
@@ -287,8 +384,12 @@ export default function Dashboard() {
               Are you sure you want to remove <span className="font-medium text-foreground">{deletingCourse?.name}</span> and all associated milestones? This action cannot be undone.
             </p>
             <div className="flex justify-end gap-3 pt-4">
-              <Button variant="outline" onClick={() => setDeletingCourse(null)}>Cancel</Button>
-              <Button variant="destructive" onClick={deleteCourse}>Remove</Button>
+              <Button variant="outline" onClick={() => setDeletingCourse(null)}>
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={deleteCourse}>
+                Remove
+              </Button>
             </div>
           </DialogContent>
         </Dialog>
