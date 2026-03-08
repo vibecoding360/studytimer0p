@@ -14,10 +14,12 @@ import StudyHeatmap from "@/components/StudyHeatmap";
 import CourseTimeChart from "@/components/CourseTimeChart";
 import DashboardTimer from "@/components/DashboardTimer";
 import BottomSheet from "@/components/BottomSheet";
+import TodaysPlan from "@/components/TodaysPlan";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usePullToRefresh } from "@/hooks/use-pull-to-refresh";
 import { triggerHaptic } from "@/lib/haptics";
 import { buildGoalEngine, generateReviewQueue, generateTodayPlan, PlanItem, ReviewItem } from "@/lib/planning";
+import { useStudyProgress } from "@/lib/study-progress-context";
 
 interface Course {
   id: string;
@@ -93,6 +95,7 @@ function SwipeableCourseCard({ course, onDelete }: { course: Course; onDelete: (
 export default function Dashboard() {
   const { user } = useAuth();
   const isMobile = useIsMobile();
+  const { roadmapTasksDone } = useStudyProgress();
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -245,19 +248,7 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
-        <Card className="rounded-2xl border-border/50 bg-card/80 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="text-base font-semibold flex items-center gap-2"><Calendar className="w-4 h-4" />Today&apos;s Plan</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {todayPlan.length ? todayPlan.map((item) => (
-              <div key={item.id} className="rounded-xl border border-border/40 p-3">
-                <p className="text-sm font-medium">{item.title}</p>
-                <p className="text-xs text-muted-foreground mt-1">{item.detail}</p>
-              </div>
-            )) : <p className="text-sm text-muted-foreground">Add syllabus dates, grading data, and roadmap tasks to auto-generate your plan.</p>}
-          </CardContent>
-        </Card>
+        <TodaysPlan planItems={todayPlan} />
 
         <Card className="rounded-2xl border-border/50 bg-card/80 backdrop-blur-sm">
           <CardHeader>
@@ -281,15 +272,28 @@ export default function Dashboard() {
             <CardTitle className="text-base font-semibold flex items-center gap-2"><Target className="w-4 h-4" />Goal Engine + Streak</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {goalSnapshot?.goals.map((goal) => (
-              <div key={goal.label} className="space-y-1.5">
-                <div className="flex items-center justify-between text-xs">
-                  <span>{goal.label}</span>
-                  <span className="font-mono">{goal.current}/{goal.target}</span>
+            {goalSnapshot?.goals.map((goal) => {
+              // Override roadmap tasks with live module count
+              const current = goal.label.includes("Roadmap") ? roadmapTasksDone : goal.current;
+              const target = goal.label.includes("Roadmap") ? Math.max(goal.target, 3) : goal.target;
+              return (
+                <div key={goal.label} className="space-y-1.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span>{goal.label}</span>
+                    <motion.span
+                      key={current}
+                      initial={{ scale: 1.3, color: "hsl(var(--primary))" }}
+                      animate={{ scale: 1, color: "hsl(var(--foreground))" }}
+                      transition={{ duration: 0.3 }}
+                      className="font-mono"
+                    >
+                      {current}/{target}
+                    </motion.span>
+                  </div>
+                  <Progress value={Math.min((current / target) * 100, 100)} className="h-2" />
                 </div>
-                <Progress value={Math.min((goal.current / goal.target) * 100, 100)} className="h-2" />
-              </div>
-            ))}
+              );
+            })}
             <div className="rounded-xl border border-border/40 p-3">
               <p className="text-sm font-medium">{goalSnapshot?.streakDays ?? 0}-day streak</p>
               <p className="text-xs text-muted-foreground mt-1">
