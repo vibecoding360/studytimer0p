@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Zap, Timer, LogOut, Globe } from "lucide-react";
+import { LayoutDashboard, Zap, Timer, LogOut, Globe, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useAuth } from "@/lib/auth";
@@ -15,6 +15,7 @@ const tabs = [
   { icon: Timer, label: "Timer", path: "/timer" },
   { icon: Zap, label: "Mastery", path: "/study-architect" },
   { icon: Globe, label: "Domains", path: "/domains" },
+  { icon: GraduationCap, label: "Modules", path: "/modules" },
 ];
 
 export default function BottomNav() {
