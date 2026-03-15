@@ -52,17 +52,30 @@ export default function TodaysPlan({ planItems }: TodaysPlanProps) {
         </div>
       </CardHeader>
       <CardContent className="space-y-2 pt-0">
+        <AnimatePresence mode="wait">
         {loading ? (
-          <div className="space-y-2">
+          <motion.div
+            key="skeleton"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 0.97 }}
+            transition={{ duration: 0.2 }}
+            className="space-y-2"
+          >
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="flex items-center gap-2.5 px-3 py-2 rounded-xl border border-border/40">
                 <Skeleton className="w-[18px] h-[18px] rounded-md shrink-0" />
                 <Skeleton className="h-3 flex-1" />
               </div>
             ))}
-          </div>
+          </motion.div>
         ) : (
-          <>
+          <motion.div
+            key="content"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          >
             {/* Auto-generated plan items (non-interactive context) */}
             {planItems.length > 0 && (
               <div className="space-y-2 mb-3">
