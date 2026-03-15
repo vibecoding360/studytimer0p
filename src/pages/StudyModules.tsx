@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
@@ -196,7 +197,7 @@ function ModuleCard({ module }: { module: StudyModule }) {
 
 // ─── Page ────────────────────────────────────────────────────────────
 export default function StudyModules() {
-  const { overallProgress, studentName, setStudentName } = useStudyProgress();
+  const { overallProgress, studentName, setStudentName, loading } = useStudyProgress();
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
@@ -235,9 +236,33 @@ export default function StudyModules() {
       </Card>
 
       <div className="space-y-3">
-        {studyModulesData.map((mod) => (
-          <ModuleCard key={mod.id} module={mod} />
-        ))}
+        {loading
+          ? [1, 2, 3].map((i) => (
+              <Card key={i} className="overflow-hidden">
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="w-10 h-10 rounded-xl" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-40" />
+                      <Skeleton className="h-3 w-24" />
+                    </div>
+                    <Skeleton className="h-2 w-32 hidden sm:block" />
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-0 space-y-2">
+                  {[1, 2, 3].map((j) => (
+                    <div key={j} className="flex items-start gap-3 p-3 rounded-xl border border-border/50">
+                      <Skeleton className="w-5 h-5 rounded-md shrink-0 mt-0.5" />
+                      <div className="flex-1 space-y-1.5">
+                        <Skeleton className="h-3.5 w-3/4" />
+                        <Skeleton className="h-3 w-1/2" />
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            ))
+          : studyModulesData.map((mod) => <ModuleCard key={mod.id} module={mod} />)}
       </div>
     </div>
   );
