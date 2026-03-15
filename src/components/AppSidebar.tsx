@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
-import { LayoutDashboard, Zap, LogOut, ChevronLeft, ChevronRight, Search, Globe, GraduationCap } from "lucide-react";
+import { LayoutDashboard, Zap, LogOut, ChevronLeft, ChevronRight, Search, GraduationCap } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,6 @@ import {
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
   { icon: Zap, label: "Mastery Hub", path: "/timer" },
-  { icon: Globe, label: "Domains & Hosting", path: "/domains" },
   { icon: GraduationCap, label: "Study Modules", path: "/modules" },
 ];
 
