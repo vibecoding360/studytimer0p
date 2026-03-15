@@ -14,7 +14,6 @@ import {
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
   { icon: Zap, label: "Mastery Hub", path: "/timer" },
-  { icon: Globe, label: "Domains & Hosting", path: "/domains" },
   { icon: GraduationCap, label: "Study Modules", path: "/modules" },
 ];
 

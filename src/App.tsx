@@ -52,7 +52,7 @@ const App = () => (
               <Route path="/grades" element={<GradeCalculator />} />
               <Route path="/study-architect" element={<StudyArchitect />} />
               <Route path="/timer" element={<StudyTimer />} />
-              <Route path="/domains" element={<DomainsHosting />} />
+              
               <Route path="/modules" element={<StudyModules />} />
             </Route>
             <Route path="*" element={<NotFound />} />
