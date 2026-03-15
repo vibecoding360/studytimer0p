@@ -1,5 +1,7 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 import { studyModulesData, taskToModuleMap, allUnlockedTaskIds } from "@/lib/study-modules-data";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
 import confetti from "canvas-confetti";
 import { toast } from "sonner";
 
@@ -12,6 +14,7 @@ interface StudyProgressContextType {
   roadmapTasksDone: number;
   studentName: string;
   setStudentName: (name: string) => void;
+  loading: boolean;
 }
 
 const StudyProgressContext = createContext<StudyProgressContextType | null>(null);
@@ -27,16 +30,58 @@ function fireConfetti() {
 }
 
 export function StudyProgressProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const [completedTasks, setCompletedTasks] = useState<Set<string>>(new Set());
   const [studentName, setStudentName] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  // Load completed tasks from DB on login
+  useEffect(() => {
+    if (!user) {
+      setCompletedTasks(new Set());
+      setLoading(false);
+      return;
+    }
+
+    const load = async () => {
+      setLoading(true);
+      const { data } = await supabase
+        .from("study_progress")
+        .select("task_id")
+        .eq("user_id", user.id);
+      if (data) {
+        setCompletedTasks(new Set(data.map((r: any) => r.task_id)));
+      }
+      setLoading(false);
+    };
+    load();
+  }, [user]);
 
   const toggleTask = useCallback((taskId: string) => {
     setCompletedTasks((prev) => {
       const next = new Set(prev);
-      if (next.has(taskId)) {
+      const wasCompleted = next.has(taskId);
+
+      if (wasCompleted) {
         next.delete(taskId);
+        // Remove from DB
+        if (user) {
+          supabase
+            .from("study_progress")
+            .delete()
+            .eq("user_id", user.id)
+            .eq("task_id", taskId)
+            .then();
+        }
       } else {
         next.add(taskId);
+        // Insert into DB
+        if (user) {
+          supabase
+            .from("study_progress")
+            .insert({ user_id: user.id, task_id: taskId })
+            .then();
+        }
         // Check if module just completed
         const mod = taskToModuleMap.get(taskId);
         if (mod && !mod.isLocked) {
@@ -49,7 +94,7 @@ export function StudyProgressProvider({ children }: { children: ReactNode }) {
       }
       return next;
     });
-  }, []);
+  }, [user]);
 
   const isTaskCompleted = useCallback((taskId: string) => completedTasks.has(taskId), [completedTasks]);
 
@@ -73,7 +118,6 @@ export function StudyProgressProvider({ children }: { children: ReactNode }) {
     pct: totalAll > 0 ? Math.round((completedCount / totalAll) * 100) : 0,
   };
 
-  // Roadmap tasks count = completed module tasks (proxy for commit evidence)
   const roadmapTasksDone = completedCount;
 
   return (
@@ -87,6 +131,7 @@ export function StudyProgressProvider({ children }: { children: ReactNode }) {
         roadmapTasksDone,
         studentName,
         setStudentName,
+        loading,
       }}
     >
       {children}
