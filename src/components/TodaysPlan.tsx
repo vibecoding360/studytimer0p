@@ -14,7 +14,7 @@ interface TodaysPlanProps {
 }
 
 export default function TodaysPlan({ planItems }: TodaysPlanProps) {
-  const { completedTasks, toggleTask, isTaskCompleted, overallProgress } = useStudyProgress();
+  const { completedTasks, toggleTask, isTaskCompleted, overallProgress, loading } = useStudyProgress();
   const [showModuleTasks, setShowModuleTasks] = useState(true);
 
   // Get all unlocked module tasks as interactive items
