@@ -236,33 +236,56 @@ export default function StudyModules() {
       </Card>
 
       <div className="space-y-3">
-        {loading
-          ? [1, 2, 3].map((i) => (
-              <Card key={i} className="overflow-hidden">
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <Skeleton className="w-10 h-10 rounded-xl" />
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-4 w-40" />
-                      <Skeleton className="h-3 w-24" />
-                    </div>
-                    <Skeleton className="h-2 w-32 hidden sm:block" />
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0 space-y-2">
-                  {[1, 2, 3].map((j) => (
-                    <div key={j} className="flex items-start gap-3 p-3 rounded-xl border border-border/50">
-                      <Skeleton className="w-5 h-5 rounded-md shrink-0 mt-0.5" />
-                      <div className="flex-1 space-y-1.5">
-                        <Skeleton className="h-3.5 w-3/4" />
-                        <Skeleton className="h-3 w-1/2" />
+        <AnimatePresence mode="wait">
+          {loading ? (
+            <motion.div
+              key="skeleton"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, scale: 0.97 }}
+              transition={{ duration: 0.2 }}
+              className="space-y-3"
+            >
+              {[1, 2, 3].map((i) => (
+                <Card key={i} className="overflow-hidden">
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <Skeleton className="w-10 h-10 rounded-xl" />
+                      <div className="flex-1 space-y-2">
+                        <Skeleton className="h-4 w-40" />
+                        <Skeleton className="h-3 w-24" />
                       </div>
+                      <Skeleton className="h-2 w-32 hidden sm:block" />
                     </div>
-                  ))}
-                </CardContent>
-              </Card>
-            ))
-          : studyModulesData.map((mod) => <ModuleCard key={mod.id} module={mod} />)}
+                  </CardHeader>
+                  <CardContent className="pt-0 space-y-2">
+                    {[1, 2, 3].map((j) => (
+                      <div key={j} className="flex items-start gap-3 p-3 rounded-xl border border-border/50">
+                        <Skeleton className="w-5 h-5 rounded-md shrink-0 mt-0.5" />
+                        <div className="flex-1 space-y-1.5">
+                          <Skeleton className="h-3.5 w-3/4" />
+                          <Skeleton className="h-3 w-1/2" />
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="content"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="space-y-3"
+            >
+              {studyModulesData.map((mod) => (
+                <ModuleCard key={mod.id} module={mod} />
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

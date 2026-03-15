@@ -166,8 +166,9 @@ export default function TodaysPlan({ planItems }: TodaysPlanProps) {
                 Add syllabus dates, grading data, and roadmap tasks to auto-generate your plan.
               </p>
             )}
-          </>
+          </motion.div>
         )}
+        </AnimatePresence>
       </CardContent>
     </Card>
   );
