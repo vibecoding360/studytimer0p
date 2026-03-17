@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
-import { LayoutDashboard, Zap, LogOut, ChevronLeft, ChevronRight, Search, GraduationCap } from "lucide-react";
+import { LayoutDashboard, Zap, LogOut, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
