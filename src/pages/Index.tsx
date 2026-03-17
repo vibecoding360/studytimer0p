@@ -19,7 +19,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { usePullToRefresh } from "@/hooks/use-pull-to-refresh";
 import { triggerHaptic } from "@/lib/haptics";
 import { buildGoalEngine, generateReviewQueue, generateTodayPlan, PlanItem, ReviewItem } from "@/lib/planning";
-import { useStudyProgress } from "@/lib/study-progress-context";
+
 
 interface Course {
   id: string;
