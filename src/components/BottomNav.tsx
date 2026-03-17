@@ -14,7 +14,7 @@ const tabs = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
   { icon: Timer, label: "Timer", path: "/timer" },
   { icon: Zap, label: "Mastery", path: "/study-architect" },
-  { icon: GraduationCap, label: "Modules", path: "/modules" },
+  
 ];
 
 export default function BottomNav() {
