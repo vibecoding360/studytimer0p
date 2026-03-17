@@ -95,7 +95,7 @@ function SwipeableCourseCard({ course, onDelete }: { course: Course; onDelete: (
 export default function Dashboard() {
   const { user } = useAuth();
   const isMobile = useIsMobile();
-  const { roadmapTasksDone } = useStudyProgress();
+  
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
