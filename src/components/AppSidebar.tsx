@@ -14,7 +14,7 @@ import {
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
   { icon: Zap, label: "Mastery Hub", path: "/timer" },
-  { icon: GraduationCap, label: "Study Modules", path: "/modules" },
+  
 ];
 
 export default function AppSidebar() {

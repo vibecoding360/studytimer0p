@@ -42,7 +42,6 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <AuthProvider>
-            <StudyProgressProvider>
             <Routes>
             <Route path="/auth" element={<AuthRoute />} />
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
@@ -52,12 +51,9 @@ const App = () => (
               <Route path="/grades" element={<GradeCalculator />} />
               <Route path="/study-architect" element={<StudyArchitect />} />
               <Route path="/timer" element={<StudyTimer />} />
-              
-              <Route path="/modules" element={<StudyModules />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
-            </StudyProgressProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
