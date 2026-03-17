@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider, useAuth } from "@/lib/auth";
-import { StudyProgressProvider } from "@/lib/study-progress-context";
+
 import AppLayout from "@/components/AppLayout";
 import Auth from "@/pages/Auth";
 import Dashboard from "@/pages/Index";
@@ -15,7 +15,7 @@ import GradeCalculator from "@/pages/GradeCalculator";
 import StudyArchitect from "@/pages/StudyArchitect";
 import StudyTimer from "@/pages/StudyTimer";
 
-import StudyModules from "@/pages/StudyModules";
+
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,7 +42,6 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <AuthProvider>
-            <StudyProgressProvider>
             <Routes>
             <Route path="/auth" element={<AuthRoute />} />
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
@@ -52,12 +51,9 @@ const App = () => (
               <Route path="/grades" element={<GradeCalculator />} />
               <Route path="/study-architect" element={<StudyArchitect />} />
               <Route path="/timer" element={<StudyTimer />} />
-              
-              <Route path="/modules" element={<StudyModules />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
-            </StudyProgressProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

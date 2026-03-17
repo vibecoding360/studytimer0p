@@ -19,7 +19,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { usePullToRefresh } from "@/hooks/use-pull-to-refresh";
 import { triggerHaptic } from "@/lib/haptics";
 import { buildGoalEngine, generateReviewQueue, generateTodayPlan, PlanItem, ReviewItem } from "@/lib/planning";
-import { useStudyProgress } from "@/lib/study-progress-context";
+
 
 interface Course {
   id: string;
@@ -95,7 +95,7 @@ function SwipeableCourseCard({ course, onDelete }: { course: Course; onDelete: (
 export default function Dashboard() {
   const { user } = useAuth();
   const isMobile = useIsMobile();
-  const { roadmapTasksDone } = useStudyProgress();
+  
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -273,9 +273,8 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="space-y-4">
             {goalSnapshot?.goals.map((goal) => {
-              // Override roadmap tasks with live module count
-              const current = goal.label.includes("Roadmap") ? roadmapTasksDone : goal.current;
-              const target = goal.label.includes("Roadmap") ? Math.max(goal.target, 3) : goal.target;
+              const current = goal.current;
+              const target = goal.target;
               return (
                 <div key={goal.label} className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
