@@ -15,7 +15,7 @@ import GradeCalculator from "@/pages/GradeCalculator";
 import StudyArchitect from "@/pages/StudyArchitect";
 import StudyTimer from "@/pages/StudyTimer";
 
-import StudyModules from "@/pages/StudyModules";
+
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
