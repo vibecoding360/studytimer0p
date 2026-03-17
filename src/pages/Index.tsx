@@ -273,9 +273,8 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="space-y-4">
             {goalSnapshot?.goals.map((goal) => {
-              // Override roadmap tasks with live module count
-              const current = goal.label.includes("Roadmap") ? roadmapTasksDone : goal.current;
-              const target = goal.label.includes("Roadmap") ? Math.max(goal.target, 3) : goal.target;
+              const current = goal.current;
+              const target = goal.target;
               return (
                 <div key={goal.label} className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
