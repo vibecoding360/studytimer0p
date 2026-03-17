@@ -6,76 +6,95 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 220 20% 97%;
     --foreground: 215 28% 10%;
     --card: 0 0% 100%;
     --card-foreground: 215 28% 10%;
     --popover: 0 0% 100%;
     --popover-foreground: 215 28% 10%;
-    --primary: 234 89% 64%;
+    --primary: 249 100% 74%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 215 20% 95%;
+    --secondary: 220 18% 93%;
     --secondary-foreground: 215 28% 17%;
-    --muted: 215 20% 95%;
+    --muted: 220 18% 93%;
     --muted-foreground: 215 16% 47%;
-    --accent: 215 20% 95%;
+    --accent: 220 18% 93%;
     --accent-foreground: 215 28% 17%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 215 20% 90%;
-    --input: 215 20% 90%;
-    --ring: 234 89% 64%;
+    --border: 220 18% 88%;
+    --input: 220 18% 88%;
+    --ring: 249 100% 74%;
     --radius: 0.75rem;
-    --success: 160 84% 39%;
-    --success-foreground: 0 0% 100%;
+    --success: 153 93% 58%;
+    --success-foreground: 160 80% 10%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
+    --coral: 0 100% 71%;
+    --coral-foreground: 0 0% 100%;
     --glass: 0 0% 100% / 0.6;
     --glass-border: 0 0% 100% / 0.2;
-    --sidebar-background: 215 25% 97%;
+    --sidebar-background: 220 22% 96%;
     --sidebar-foreground: 215 20% 25%;
-    --sidebar-primary: 234 89% 64%;
+    --sidebar-primary: 249 100% 74%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 215 20% 93%;
+    --sidebar-accent: 220 18% 91%;
     --sidebar-accent-foreground: 215 20% 15%;
-    --sidebar-border: 215 20% 90%;
-    --sidebar-ring: 234 89% 64%;
+    --sidebar-border: 220 18% 88%;
+    --sidebar-ring: 249 100% 74%;
+
+    /* Timer state tokens */
+    --timer-focus: 220 70% 50%;
+    --timer-focus-glow: 220 70% 50% / 0.15;
+    --timer-break: 25 95% 60%;
+    --timer-break-glow: 25 95% 60% / 0.15;
+    --timer-urgency: 0 84% 60%;
+    --timer-urgency-glow: 0 84% 60% / 0.25;
   }
 
   .dark {
     --background: 222 47% 7%;
     --foreground: 210 20% 95%;
-    --card: 217 33% 12%;
+    --card: 220 35% 11%;
     --card-foreground: 210 20% 95%;
-    --popover: 217 33% 12%;
+    --popover: 220 35% 11%;
     --popover-foreground: 210 20% 95%;
-    --primary: 234 89% 67%;
+    --primary: 249 100% 74%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 217 25% 16%;
+    --secondary: 220 25% 15%;
     --secondary-foreground: 210 20% 93%;
-    --muted: 217 25% 16%;
+    --muted: 220 25% 15%;
     --muted-foreground: 215 16% 55%;
-    --accent: 217 25% 16%;
+    --accent: 220 25% 15%;
     --accent-foreground: 210 20% 93%;
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border: 217 20% 18%;
-    --input: 217 20% 18%;
-    --ring: 234 89% 67%;
-    --success: 160 95% 44%;
+    --border: 220 20% 17%;
+    --input: 220 20% 17%;
+    --ring: 249 100% 74%;
+    --success: 153 93% 52%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
-    --glass: 217 33% 12% / 0.6;
+    --coral: 0 100% 71%;
+    --coral-foreground: 0 0% 100%;
+    --glass: 220 35% 11% / 0.6;
     --glass-border: 210 20% 95% / 0.08;
     --sidebar-background: 222 47% 7%;
     --sidebar-foreground: 210 20% 88%;
-    --sidebar-primary: 234 89% 67%;
+    --sidebar-primary: 249 100% 74%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 25% 14%;
+    --sidebar-accent: 220 25% 13%;
     --sidebar-accent-foreground: 210 20% 88%;
-    --sidebar-border: 217 20% 15%;
-    --sidebar-ring: 234 89% 67%;
+    --sidebar-border: 220 20% 14%;
+    --sidebar-ring: 249 100% 74%;
+
+    --timer-focus: 220 70% 55%;
+    --timer-focus-glow: 220 70% 55% / 0.2;
+    --timer-break: 25 95% 60%;
+    --timer-break-glow: 25 95% 60% / 0.2;
+    --timer-urgency: 0 70% 55%;
+    --timer-urgency-glow: 0 70% 55% / 0.3;
   }
 }
 
@@ -100,10 +119,10 @@
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400;
   }
   .glow {
-    box-shadow: 0 0 24px hsl(234 89% 67% / 0.12), 0 0 64px hsl(234 89% 67% / 0.04);
+    box-shadow: 0 0 24px hsl(249 100% 74% / 0.15), 0 0 64px hsl(249 100% 74% / 0.05);
   }
   .glow-sm {
-    box-shadow: 0 0 12px hsl(234 89% 67% / 0.1);
+    box-shadow: 0 0 12px hsl(249 100% 74% / 0.1);
   }
   /* M3 touch targets */
   .touch-target {
@@ -126,5 +145,14 @@
   .gpu-accelerated {
     transform: translateZ(0);
     will-change: transform, opacity;
+  }
+
+  /* Timer urgency pulse */
+  @keyframes urgency-pulse {
+    0%, 100% { box-shadow: 0 0 20px hsl(var(--timer-urgency-glow)), 0 0 60px hsl(var(--timer-urgency-glow)); }
+    50% { box-shadow: 0 0 40px hsl(var(--timer-urgency-glow)), 0 0 100px hsl(var(--timer-urgency-glow)); }
+  }
+  .timer-urgency-pulse {
+    animation: urgency-pulse 1s ease-in-out infinite;
   }
 }

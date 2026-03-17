@@ -13,6 +13,8 @@ import TimerDisplay from "@/components/study-timer/TimerDisplay";
 import FocusRating from "@/components/study-timer/FocusRating";
 import SoundscapeToggle from "@/components/study-timer/SoundscapeToggle";
 import { soundscapeEngine } from "@/lib/soundscape-engine";
+import { playCompletionChime, playBreakEndPing, playUrgencyTick } from "@/lib/zen-sounds";
+import confetti from "canvas-confetti";
 
 interface Course {
   id: string;
@@ -33,6 +35,29 @@ const PRESETS: Record<TimerMode, { work: number; break: number; label: string }>
   custom: { work: 45, break: 10, label: "Custom Flow" },
 };
 
+function fireCompletionConfetti() {
+  const end = Date.now() + 1200;
+  const colors = ["#8E7CFF", "#2AF598", "#FF6B6B", "#FFD700"];
+  const frame = () => {
+    confetti({
+      particleCount: 4,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0, y: 0.7 },
+      colors,
+    });
+    confetti({
+      particleCount: 4,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1, y: 0.7 },
+      colors,
+    });
+    if (Date.now() < end) requestAnimationFrame(frame);
+  };
+  frame();
+}
+
 export default function StudyTimer() {
   const { user } = useAuth();
   const [mode, setMode] = useState<TimerMode>("pomodoro");
@@ -47,6 +72,7 @@ export default function StudyTimer() {
   const [isBreak, setIsBreak] = useState(false);
   const [round, setRound] = useState(1);
   const [commitMessage, setCommitMessage] = useState("");
+  const [showBounce, setShowBounce] = useState(false);
   
   const [courses, setCourses] = useState<Course[]>([]);
   const [syllabusItems, setSyllabusItems] = useState<SyllabusItem[]>([]);
@@ -54,6 +80,7 @@ export default function StudyTimer() {
   const [selectedItem, setSelectedItem] = useState<string>("");
   const [emergencyUsed, setEmergencyUsed] = useState<number | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const lastTickRef = useRef<number>(0);
 
   useEffect(() => {
     supabase.from("courses").select("id, name").then(({ data }) => {
@@ -87,6 +114,17 @@ export default function StudyTimer() {
     setState("running");
   }, [mode, customBreak]);
 
+  // Urgency tick for last 10 seconds
+  useEffect(() => {
+    if (state === "running" && !isBreak && timeLeft <= 10 && timeLeft > 0) {
+      const now = Date.now();
+      if (now - lastTickRef.current > 900) {
+        playUrgencyTick();
+        lastTickRef.current = now;
+      }
+    }
+  }, [timeLeft, state, isBreak]);
+
   useEffect(() => {
     if (state !== "running") {
       if (intervalRef.current) clearInterval(intervalRef.current);
@@ -106,12 +144,22 @@ export default function StudyTimer() {
   }, [state]);
 
   const handleTimerEnd = () => {
+    if (isBreak) {
+      // Break ended
+      playBreakEndPing();
+    } else {
+      // Focus session completed — confetti + chime + bounce
+      playCompletionChime();
+      fireCompletionConfetti();
+      setShowBounce(true);
+      setTimeout(() => setShowBounce(false), 600);
+    }
+
     if (Notification.permission === "granted") {
       new Notification(isBreak ? "Break over! Time to focus." : "Session complete! Take a break.", {
         icon: "/favicon.ico",
       });
     }
-    // Haptic feedback when timer finishes
     if ("vibrate" in navigator) {
       navigator.vibrate(isBreak ? [25] : [50, 30, 50]);
     }
@@ -212,7 +260,7 @@ export default function StudyTimer() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex flex-col items-center justify-center min-h-[70vh] gap-8"
+            className={`flex flex-col items-center justify-center min-h-[70vh] gap-8 ${showBounce ? "animate-bounce-in" : ""}`}
           >
             <TimerDisplay
               timeLeft={timeLeft}
@@ -221,7 +269,7 @@ export default function StudyTimer() {
               commitMessage={commitMessage}
             />
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 relative z-10">
               <Button variant="ghost" size="icon" onClick={togglePause} className="w-14 h-14 rounded-full border border-border/30 touch-target">
                 {state === "running" ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
               </Button>
@@ -235,7 +283,7 @@ export default function StudyTimer() {
               )}
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 relative z-10">
               <SoundscapeToggle />
               <span className="text-xs text-muted-foreground">Round {round}</span>
             </div>
@@ -266,7 +314,7 @@ export default function StudyTimer() {
                     onClick={() => setMode(m)}
                     className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border ${
                       mode === m
-                        ? "border-success bg-success/10 text-foreground"
+                        ? "border-primary bg-primary/10 text-foreground"
                         : "border-border/30 text-muted-foreground hover:border-border"
                     }`}
                   >
@@ -350,7 +398,7 @@ export default function StudyTimer() {
             {/* Start */}
             <Button
               onClick={startTimer}
-              className="w-full h-14 text-base font-semibold bg-success hover:bg-success/90 text-success-foreground rounded-xl touch-target"
+              className="w-full h-14 text-base font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl touch-target"
             >
               Start Focus Session
             </Button>
