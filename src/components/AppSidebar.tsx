@@ -14,7 +14,7 @@ import {
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
   { icon: Zap, label: "Mastery Hub", path: "/timer" },
-  
+  { icon: CalendarDays, label: "365 Challenge", path: "/365" },
 ];
 
 export default function AppSidebar() {

@@ -52,6 +52,7 @@ const App = () => (
               <Route path="/grades" element={<GradeCalculator />} />
               <Route path="/study-architect" element={<StudyArchitect />} />
               <Route path="/timer" element={<StudyTimer />} />
+              <Route path="/365" element={<HabitTracker />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
