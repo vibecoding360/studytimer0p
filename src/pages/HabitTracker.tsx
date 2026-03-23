@@ -8,6 +8,7 @@ import { Flame, Trophy, Calendar, Play, CheckCircle2 } from "lucide-react";
 import { playCompletionChime } from "@/lib/zen-sounds";
 import confetti from "canvas-confetti";
 import { toast } from "@/hooks/use-toast";
+import DailyNotes from "@/components/habit-tracker/DailyNotes";
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const MOTIVATIONAL = [
