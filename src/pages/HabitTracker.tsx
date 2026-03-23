@@ -286,17 +286,23 @@ export default function HabitTracker() {
                     const dateStr = `${year}-${String(monthIdx + 1).padStart(2, "0")}-${String(dayIdx + 1).padStart(2, "0")}`;
                     const isCompleted = completedDates.has(dateStr);
                     const isToday = dateStr === today;
+                    const isFuture = dateStr > today;
                     return (
                       <div
                         key={dayIdx}
+                        onClick={() => !isFuture && setNotesDate(dateStr)}
                         className={`w-3 h-3 rounded-[2px] transition-colors ${
-                          isCompleted
+                          isFuture ? "" : "cursor-pointer hover:ring-1 hover:ring-primary/50"
+                        } ${
+                          dateStr === notesDate
+                            ? "ring-2 ring-primary"
+                            : isCompleted
                             ? "bg-success"
                             : isToday
                             ? "bg-primary/30 ring-1 ring-primary"
                             : "bg-muted/40"
-                        }`}
-                        title={`${MONTHS[monthIdx]} ${dayIdx + 1}${isCompleted ? " ✓" : ""}`}
+                        } ${isCompleted ? "bg-success" : ""}`}
+                        title={`${MONTHS[monthIdx]} ${dayIdx + 1}${isCompleted ? " ✓" : ""} — Click to view note`}
                       />
                     );
                   })}
