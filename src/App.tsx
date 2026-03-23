@@ -14,6 +14,7 @@ import SmartCalendar from "@/pages/SmartCalendar";
 import GradeCalculator from "@/pages/GradeCalculator";
 import StudyArchitect from "@/pages/StudyArchitect";
 import StudyTimer from "@/pages/StudyTimer";
+import HabitTracker from "@/pages/HabitTracker";
 
 
 import NotFound from "./pages/NotFound";
