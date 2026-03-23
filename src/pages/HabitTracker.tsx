@@ -307,6 +307,11 @@ export default function HabitTracker() {
         </div>
       </div>
 
+      {/* Daily Notes */}
+      {user && (
+        <DailyNotes userId={user.id} selectedDate={notesDate} onDateChange={setNotesDate} />
+      )}
+
       {/* Celebration Modal */}
       <AnimatePresence>
         {showCelebration && (
