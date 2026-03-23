@@ -45,6 +45,7 @@ export default function HabitTracker() {
   const [timerState, setTimerState] = useState<"idle" | "running" | "done">("idle");
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [notesDate, setNotesDate] = useState(formatDate(new Date()));
 
   const today = formatDate(new Date());
   const todayCompleted = completedDates.has(today);
