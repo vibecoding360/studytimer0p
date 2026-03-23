@@ -59,6 +59,27 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_completions: {
+        Row: {
+          completed_date: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          completed_date?: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          completed_date?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       grading_weights: {
         Row: {
           category: string

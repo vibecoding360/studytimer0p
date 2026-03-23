@@ -14,6 +14,7 @@ import SmartCalendar from "@/pages/SmartCalendar";
 import GradeCalculator from "@/pages/GradeCalculator";
 import StudyArchitect from "@/pages/StudyArchitect";
 import StudyTimer from "@/pages/StudyTimer";
+import HabitTracker from "@/pages/HabitTracker";
 
 
 import NotFound from "./pages/NotFound";
@@ -51,6 +52,7 @@ const App = () => (
               <Route path="/grades" element={<GradeCalculator />} />
               <Route path="/study-architect" element={<StudyArchitect />} />
               <Route path="/timer" element={<StudyTimer />} />
+              <Route path="/365" element={<HabitTracker />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

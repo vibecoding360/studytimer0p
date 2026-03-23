@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Zap, Timer, LogOut } from "lucide-react";
+import { LayoutDashboard, Zap, Timer, LogOut, CalendarDays } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useAuth } from "@/lib/auth";
@@ -14,7 +14,7 @@ const tabs = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
   { icon: Timer, label: "Timer", path: "/timer" },
   { icon: Zap, label: "Mastery", path: "/study-architect" },
-  
+  { icon: CalendarDays, label: "365", path: "/365" },
 ];
 
 export default function BottomNav() {
