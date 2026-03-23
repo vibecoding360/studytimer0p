@@ -8,6 +8,7 @@ import { Flame, Trophy, Calendar, Play, CheckCircle2 } from "lucide-react";
 import { playCompletionChime } from "@/lib/zen-sounds";
 import confetti from "canvas-confetti";
 import { toast } from "@/hooks/use-toast";
+import DailyNotes from "@/components/habit-tracker/DailyNotes";
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const MOTIVATIONAL = [
@@ -44,6 +45,7 @@ export default function HabitTracker() {
   const [timerState, setTimerState] = useState<"idle" | "running" | "done">("idle");
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [notesDate, setNotesDate] = useState(formatDate(new Date()));
 
   const today = formatDate(new Date());
   const todayCompleted = completedDates.has(today);
@@ -304,6 +306,11 @@ export default function HabitTracker() {
           })}
         </div>
       </div>
+
+      {/* Daily Notes */}
+      {user && (
+        <DailyNotes userId={user.id} selectedDate={notesDate} onDateChange={setNotesDate} />
+      )}
 
       {/* Celebration Modal */}
       <AnimatePresence>
