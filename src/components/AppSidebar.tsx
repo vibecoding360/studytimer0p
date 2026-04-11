@@ -40,7 +40,7 @@ export default function AppSidebar() {
         <div className="w-8 h-8 rounded-lg bg-success/15 flex items-center justify-center shrink-0">
           <Zap className="w-4 h-4 text-success" />
         </div>
-        {!collapsed && <span className="font-bold text-sm tracking-tight">StudySync</span>}
+        {!collapsed && <span className="font-bold text-sm tracking-tight text-primary">MatrixMindset</span>}
       </div>
 
       <nav className="flex-1 flex flex-col gap-0.5">
