@@ -29,7 +29,7 @@ function formatDate(d: Date) {
 
 function fireConfetti() {
   const end = Date.now() + 1500;
-  const colors = ["#8E7CFF", "#2AF598", "#FF6B6B", "#FFD700"];
+  const colors = ["#00ff00", "#2AF598", "#00cc44", "#39ff14"];
   const frame = () => {
     confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0, y: 0.7 }, colors });
     confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1, y: 0.7 }, colors });
