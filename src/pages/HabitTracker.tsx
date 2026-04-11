@@ -12,11 +12,11 @@ import DailyNotes from "@/components/habit-tracker/DailyNotes";
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const MOTIVATIONAL = [
-  "Focus for 25 minutes. Your future self is watching.",
-  "One session at a time. That's how greatness is built.",
-  "You showed up. That's already winning.",
-  "Deep focus is your superpower.",
-  "Consistency beats talent every single time.",
+  "There is no spoon. There is only focus.",
+  "The Matrix has you… unless you choose discipline.",
+  "Free your mind. One session at a time.",
+  "You took the red pill. Now show up.",
+  "Consistency is the code that rewrites reality.",
 ];
 
 function getDaysInMonth(year: number, month: number) {
@@ -29,7 +29,7 @@ function formatDate(d: Date) {
 
 function fireConfetti() {
   const end = Date.now() + 1500;
-  const colors = ["#8E7CFF", "#2AF598", "#FF6B6B", "#FFD700"];
+  const colors = ["#00ff00", "#2AF598", "#00cc44", "#39ff14"];
   const frame = () => {
     confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0, y: 0.7 }, colors });
     confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1, y: 0.7 }, colors });
@@ -157,9 +157,9 @@ export default function HabitTracker() {
       <div className="text-center space-y-2">
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight flex items-center justify-center gap-2">
           <Calendar className="w-7 h-7 text-primary" />
-          365-Day Consistency Challenge
+          365-Day Matrix Protocol
         </h1>
-        <p className="text-muted-foreground text-sm">Show up every day. Build your future.</p>
+        <p className="text-muted-foreground text-sm">Free your mind. Show up every day.</p>
       </div>
 
       {/* Stats Row */}
@@ -334,9 +334,9 @@ export default function HabitTracker() {
               className="bg-card border border-border/50 rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl"
             >
               <span className="text-5xl mb-4 block">🎉</span>
-              <h2 className="text-xl font-bold mb-2">You did it!</h2>
+              <h2 className="text-xl font-bold mb-2">Protocol Complete.</h2>
               <p className="text-sm text-muted-foreground mb-6">
-                That's another day of becoming the person who shows up consistently. See you tomorrow.
+                Another day of rewriting the Matrix. The system bends to your discipline. See you tomorrow.
               </p>
               <div className="flex items-center justify-center gap-2 mb-6">
                 <Flame className="w-5 h-5 text-accent" />

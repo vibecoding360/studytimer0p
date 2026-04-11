@@ -47,8 +47,8 @@ export default function Auth() {
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-success/15 mb-4">
             <Zap className="w-6 h-6 text-success" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">StudySync</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Your premium success & mastery engine</p>
+          <h1 className="text-2xl font-bold tracking-tight text-primary">MatrixMindset</h1>
+          <p className="text-muted-foreground mt-1 text-sm">Discipline is the architecture of freedom.</p>
         </div>
 
         <div className="glass-card rounded-2xl p-8">

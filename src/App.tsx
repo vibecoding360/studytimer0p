@@ -36,7 +36,7 @@ function AuthRoute() {
 }
 
 const App = () => (
-  <ThemeProvider attribute="class" defaultTheme="light" storageKey="studysync-theme">
+  <ThemeProvider attribute="class" defaultTheme="dark" storageKey="matrixmindset-theme">
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
