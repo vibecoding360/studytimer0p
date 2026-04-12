@@ -51,22 +51,62 @@ export default function ParseSyllabus() {
     }
   }, [selectedCourse, courses]);
 
+  const [uploadedFile, setUploadedFile] = useState<{ base64: string; mimeType: string; name: string } | null>(null);
+
   const handleFile = useCallback(async (file: File) => {
+    const supportedTypes = [
+      "text/plain",
+      "application/pdf",
+      "image/png",
+      "image/jpeg",
+      "image/jpg",
+      "image/webp",
+    ];
+
     if (file.type === "text/plain") {
       const text = await file.text();
       setSyllabusText(text);
-    } else {
-      toast.error("Please paste your syllabus text for now. Full PDF parsing coming soon.");
+      setUploadedFile(null);
+      return;
     }
+
+    if (!supportedTypes.includes(file.type)) {
+      toast.error("Unsupported file type. Please upload a PDF, image (PNG/JPG), or text file.");
+      return;
+    }
+
+    if (file.size > 20 * 1024 * 1024) {
+      toast.error("File too large. Maximum size is 20MB.");
+      return;
+    }
+
+    // Convert to base64
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      const base64 = result.split(",")[1];
+      setUploadedFile({ base64, mimeType: file.type, name: file.name });
+      setSyllabusText(""); // Clear text when file is uploaded
+      toast.success(`File "${file.name}" loaded successfully`);
+    };
+    reader.onerror = () => toast.error("Failed to read file");
+    reader.readAsDataURL(file);
   }, []);
 
   const parseSyllabus = async () => {
-    if (!syllabusText.trim()) return;
+    if (!syllabusText.trim() && !uploadedFile) return;
     setParsing(true);
     try {
-      const { data, error } = await supabase.functions.invoke("parse-syllabus", {
-        body: { text: syllabusText, action: "parse" },
-      });
+      const body: any = { action: "parse" };
+      if (uploadedFile) {
+        body.fileBase64 = uploadedFile.base64;
+        body.fileMimeType = uploadedFile.mimeType;
+        if (syllabusText.trim()) body.text = syllabusText;
+      } else {
+        body.text = syllabusText;
+      }
+
+      const { data, error } = await supabase.functions.invoke("parse-syllabus", { body });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       setParsed(data);
@@ -150,6 +190,8 @@ export default function ParseSyllabus() {
             parsing={parsing}
             parsed={!!parsed}
             onParse={parseSyllabus}
+            uploadedFileName={uploadedFile?.name || null}
+            onClearFile={() => setUploadedFile(null)}
           />
 
           {selectedCourse && (
