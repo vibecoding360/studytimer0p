@@ -190,6 +190,8 @@ export default function ParseSyllabus() {
             parsing={parsing}
             parsed={!!parsed}
             onParse={parseSyllabus}
+            uploadedFileName={uploadedFile?.name || null}
+            onClearFile={() => setUploadedFile(null)}
           />
 
           {selectedCourse && (
