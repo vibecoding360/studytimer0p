@@ -51,13 +51,46 @@ export default function ParseSyllabus() {
     }
   }, [selectedCourse, courses]);
 
+  const [uploadedFile, setUploadedFile] = useState<{ base64: string; mimeType: string; name: string } | null>(null);
+
   const handleFile = useCallback(async (file: File) => {
+    const supportedTypes = [
+      "text/plain",
+      "application/pdf",
+      "image/png",
+      "image/jpeg",
+      "image/jpg",
+      "image/webp",
+    ];
+
     if (file.type === "text/plain") {
       const text = await file.text();
       setSyllabusText(text);
-    } else {
-      toast.error("Please paste your syllabus text for now. Full PDF parsing coming soon.");
+      setUploadedFile(null);
+      return;
     }
+
+    if (!supportedTypes.includes(file.type)) {
+      toast.error("Unsupported file type. Please upload a PDF, image (PNG/JPG), or text file.");
+      return;
+    }
+
+    if (file.size > 20 * 1024 * 1024) {
+      toast.error("File too large. Maximum size is 20MB.");
+      return;
+    }
+
+    // Convert to base64
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      const base64 = result.split(",")[1];
+      setUploadedFile({ base64, mimeType: file.type, name: file.name });
+      setSyllabusText(""); // Clear text when file is uploaded
+      toast.success(`File "${file.name}" loaded successfully`);
+    };
+    reader.onerror = () => toast.error("Failed to read file");
+    reader.readAsDataURL(file);
   }, []);
 
   const parseSyllabus = async () => {
