@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
-import { Calendar as CalIcon, AlertTriangle, BookOpen } from "lucide-react";
+import { Calendar as CalIcon, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { format, parseISO, isAfter, isBefore, addDays } from "date-fns";
 
 interface DateEvent {
@@ -44,8 +45,9 @@ export default function SmartCalendar() {
   }, []);
 
   const filtered = filter === "all" ? events : events.filter(e => e.course_id === filter);
-  const upcoming = filtered.filter(e => e.date && isAfter(parseISO(e.date), addDays(new Date(), -1)));
-  const past = filtered.filter(e => e.date && isBefore(parseISO(e.date), new Date()));
+  const now = new Date();
+  const upcoming = filtered.filter(e => e.date && isAfter(parseISO(e.date), addDays(now, -1)));
+  const past = filtered.filter(e => e.date && isBefore(parseISO(e.date), addDays(now, -1)));
 
   const groupByMonth = (evts: DateEvent[]) => {
     const groups: Record<string, DateEvent[]> = {};
@@ -57,7 +59,57 @@ export default function SmartCalendar() {
     return groups;
   };
 
-  const months = groupByMonth(upcoming);
+  const renderEvents = (evts: DateEvent[], isPast = false) => {
+    if (evts.length === 0) {
+      return (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-16">
+          <CalIcon className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
+          <p className="text-muted-foreground text-sm">
+            {isPast ? "No past events." : "No upcoming events. Parse a syllabus to populate your calendar."}
+          </p>
+        </motion.div>
+      );
+    }
+
+    const months = groupByMonth(evts);
+    return (
+      <div className="space-y-6">
+        {Object.entries(months).map(([month, items]) => (
+          <div key={month}>
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">{month}</h2>
+            <div className="space-y-2">
+              {items.map((e, i) => (
+                <motion.div key={e.id} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }}>
+                  <Card className={`glass-card-hover ${isPast ? "opacity-60" : ""}`}>
+                    <CardContent className="flex items-center gap-4 py-3 px-4">
+                      <div className="text-center min-w-[48px]">
+                        <p className="text-lg font-bold">{e.date ? format(parseISO(e.date), "d") : "?"}</p>
+                        <p className="text-xs text-muted-foreground">{e.date ? format(parseISO(e.date), "EEE") : ""}</p>
+                      </div>
+                      <div className="w-0.5 h-8 rounded-full" style={{ backgroundColor: e.course_color || "#6366f1" }} />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">{e.title}</p>
+                        <p className="text-xs text-muted-foreground">{e.course_name}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {isPast && <CheckCircle2 className="w-4 h-4 text-primary" />}
+                        {e.is_high_stakes && (
+                          <Badge variant="destructive" className="gap-1 text-xs">
+                            <AlertTriangle className="w-3 h-3" />High Stakes
+                          </Badge>
+                        )}
+                        <Badge variant="outline" className="text-xs">{e.event_type}</Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div>
@@ -77,46 +129,17 @@ export default function SmartCalendar() {
 
       {loading ? (
         <div className="space-y-4">{[1, 2, 3].map(i => <div key={i} className="h-20 rounded-xl bg-secondary/30 animate-pulse" />)}</div>
-      ) : upcoming.length === 0 ? (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
-          <CalIcon className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-          <p className="text-muted-foreground">No upcoming events. Parse a syllabus to populate your calendar.</p>
-        </motion.div>
       ) : (
-        <div className="space-y-8">
-          {Object.entries(months).map(([month, evts]) => (
-            <div key={month}>
-              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">{month}</h2>
-              <div className="space-y-2">
-                {evts.map((e, i) => (
-                  <motion.div key={e.id} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }}>
-                    <Card className="glass-card-hover">
-                      <CardContent className="flex items-center gap-4 py-3 px-4">
-                        <div className="text-center min-w-[48px]">
-                          <p className="text-lg font-bold">{e.date ? format(parseISO(e.date), "d") : "?"}</p>
-                          <p className="text-xs text-muted-foreground">{e.date ? format(parseISO(e.date), "EEE") : ""}</p>
-                        </div>
-                        <div className="w-0.5 h-8 rounded-full" style={{ backgroundColor: e.course_color || "#6366f1" }} />
-                        <div className="flex-1">
-                          <p className="text-sm font-medium">{e.title}</p>
-                          <p className="text-xs text-muted-foreground">{e.course_name}</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {e.is_high_stakes && (
-                            <Badge variant="destructive" className="gap-1 text-xs">
-                              <AlertTriangle className="w-3 h-3" />High Stakes
-                            </Badge>
-                          )}
-                          <Badge variant="outline" className="text-xs">{e.event_type}</Badge>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+        <Tabs defaultValue="upcoming" className="w-full">
+          <TabsList className="mb-4">
+            <TabsTrigger value="upcoming">Upcoming ({upcoming.length})</TabsTrigger>
+            <TabsTrigger value="past">Past ({past.length})</TabsTrigger>
+            <TabsTrigger value="all">All ({filtered.length})</TabsTrigger>
+          </TabsList>
+          <TabsContent value="upcoming">{renderEvents(upcoming)}</TabsContent>
+          <TabsContent value="past">{renderEvents(past, true)}</TabsContent>
+          <TabsContent value="all">{renderEvents(filtered)}</TabsContent>
+        </Tabs>
       )}
     </div>
   );

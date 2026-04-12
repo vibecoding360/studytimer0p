@@ -152,8 +152,8 @@ export default function ParseSyllabus() {
 
       await saveProfessor();
 
-      toast.success("Mastery Roadmap Saved Successfully");
-      setTimeout(() => navigate("/"), 600);
+      toast.success("Mastery Roadmap Saved! Calendar updated.");
+      setTimeout(() => navigate("/smart-calendar"), 600);
     } catch (err: any) {
       toast.error(err.message || "Save failed");
     } finally {
