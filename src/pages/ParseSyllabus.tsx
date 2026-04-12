@@ -94,12 +94,19 @@ export default function ParseSyllabus() {
   }, []);
 
   const parseSyllabus = async () => {
-    if (!syllabusText.trim()) return;
+    if (!syllabusText.trim() && !uploadedFile) return;
     setParsing(true);
     try {
-      const { data, error } = await supabase.functions.invoke("parse-syllabus", {
-        body: { text: syllabusText, action: "parse" },
-      });
+      const body: any = { action: "parse" };
+      if (uploadedFile) {
+        body.fileBase64 = uploadedFile.base64;
+        body.fileMimeType = uploadedFile.mimeType;
+        if (syllabusText.trim()) body.text = syllabusText;
+      } else {
+        body.text = syllabusText;
+      }
+
+      const { data, error } = await supabase.functions.invoke("parse-syllabus", { body });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       setParsed(data);
