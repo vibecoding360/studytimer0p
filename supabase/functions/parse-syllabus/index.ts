@@ -10,7 +10,6 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    // Authenticate the request
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -32,16 +31,44 @@ serve(async (req) => {
       });
     }
 
-    const { text, courseName, action } = await req.json();
+    const { text, fileBase64, fileMimeType, courseName, action } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    // Build the user message content - supports text, images, and PDFs
+    let userContent: any;
+
+    if (fileBase64 && fileMimeType) {
+      // Multimodal: file (image or PDF) + optional text
+      const parts: any[] = [
+        {
+          type: "text",
+          text: text
+            ? `Parse this syllabus. Additional context: ${text}`
+            : "Parse this syllabus document. Extract all dates, grading weights, and readings.",
+        },
+        {
+          type: "image_url",
+          image_url: {
+            url: `data:${fileMimeType};base64,${fileBase64}`,
+          },
+        },
+      ];
+      userContent = parts;
+    } else if (text) {
+      userContent = text;
+    } else {
+      return new Response(JSON.stringify({ error: "No syllabus content provided. Upload a file or paste text." }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     let systemPrompt = "";
     let tools: any[] = [];
     let toolChoice: any = undefined;
 
     if (action === "parse") {
-      systemPrompt = `You are an expert syllabus parser for university courses. Extract structured data from the syllabus text provided. Be thorough and accurate.`;
+      systemPrompt = `You are an expert syllabus parser for university courses. Extract structured data from the syllabus provided (it may be text, an image, or a PDF). Be thorough and accurate. Extract ALL dates, grading breakdowns, and reading assignments you can find.`;
       tools = [{
         type: "function",
         function: {
@@ -145,6 +172,9 @@ Be specific with resource URLs when possible. For YouTube, suggest search terms.
       toolChoice = { type: "function", function: { name: "generate_study_plan" } };
     }
 
+    // Use gemini-2.5-flash for multimodal (supports images/PDFs well)
+    const model = fileBase64 ? "google/gemini-2.5-flash" : "google/gemini-3-flash-preview";
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -152,10 +182,10 @@ Be specific with resource URLs when possible. For YouTube, suggest search terms.
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model,
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: text }
+          { role: "user", content: userContent }
         ],
         tools,
         tool_choice: toolChoice,
