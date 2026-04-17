@@ -190,6 +190,15 @@ export default function SmartCalendar() {
                           variant="ghost"
                           size="icon"
                           className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => openEditDialog(e)}
+                          aria-label="Edit event"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
                           onClick={() => handleDelete(e.id)}
                           aria-label="Delete event"
                         >
