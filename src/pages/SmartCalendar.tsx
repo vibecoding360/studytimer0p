@@ -284,7 +284,7 @@ export default function SmartCalendar() {
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-                <Button onClick={handleCreate} disabled={saving}>{saving ? "Creating..." : "Create Event"}</Button>
+                <Button onClick={handleSave} disabled={saving}>{saving ? "Saving..." : editingId ? "Save Changes" : "Create Event"}</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
