@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { motion } from "framer-motion";
-import { Calendar as CalIcon, AlertTriangle, CheckCircle2, Plus, Trash2 } from "lucide-react";
+import { Calendar as CalIcon, AlertTriangle, CheckCircle2, Plus, Trash2, Pencil } from "lucide-react";
 import { format, parseISO, isAfter, isBefore, addDays } from "date-fns";
 import { toast } from "sonner";
 
@@ -34,6 +34,7 @@ export default function SmartCalendar() {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   // form state
   const [title, setTitle] = useState("");
@@ -71,12 +72,23 @@ export default function SmartCalendar() {
   };
 
   const openDialog = () => {
+    setEditingId(null);
     resetForm();
     setCourseId(courses[0]?.id || "");
     setDialogOpen(true);
   };
 
-  const handleCreate = async () => {
+  const openEditDialog = (e: DateEvent) => {
+    setEditingId(e.id);
+    setTitle(e.title);
+    setEventDate(e.date || "");
+    setEventType(e.event_type || "assignment");
+    setCourseId(e.course_id);
+    setHighStakes(!!e.is_high_stakes);
+    setDialogOpen(true);
+  };
+
+  const handleSave = async () => {
     if (!title.trim()) return toast.error("Title is required");
     if (!eventDate) return toast.error("Date is required");
     if (!courseId) return toast.error("Please select a course (create one first if none exist)");
@@ -89,22 +101,26 @@ export default function SmartCalendar() {
       return;
     }
 
-    const { error } = await supabase.from("syllabus_dates").insert({
+    const payload = {
       title: title.trim(),
       date: eventDate,
       event_type: eventType,
       course_id: courseId,
       is_high_stakes: highStakes,
-      user_id: userData.user.id,
-    });
+    };
+
+    const { error } = editingId
+      ? await supabase.from("syllabus_dates").update(payload).eq("id", editingId)
+      : await supabase.from("syllabus_dates").insert({ ...payload, user_id: userData.user.id });
 
     setSaving(false);
     if (error) {
       toast.error(error.message);
       return;
     }
-    toast.success("Event created");
+    toast.success(editingId ? "Event updated" : "Event created");
     setDialogOpen(false);
+    setEditingId(null);
     fetchAll();
   };
 
@@ -174,6 +190,15 @@ export default function SmartCalendar() {
                           variant="ghost"
                           size="icon"
                           className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => openEditDialog(e)}
+                          aria-label="Edit event"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
                           onClick={() => handleDelete(e.id)}
                           aria-label="Delete event"
                         >
@@ -214,7 +239,7 @@ export default function SmartCalendar() {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Create Calendar Event</DialogTitle>
+                <DialogTitle>{editingId ? "Edit Calendar Event" : "Create Calendar Event"}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 py-2">
                 <div className="space-y-2">
@@ -259,7 +284,7 @@ export default function SmartCalendar() {
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-                <Button onClick={handleCreate} disabled={saving}>{saving ? "Creating..." : "Create Event"}</Button>
+                <Button onClick={handleSave} disabled={saving}>{saving ? "Saving..." : editingId ? "Save Changes" : "Create Event"}</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
