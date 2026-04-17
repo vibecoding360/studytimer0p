@@ -72,12 +72,23 @@ export default function SmartCalendar() {
   };
 
   const openDialog = () => {
+    setEditingId(null);
     resetForm();
     setCourseId(courses[0]?.id || "");
     setDialogOpen(true);
   };
 
-  const handleCreate = async () => {
+  const openEditDialog = (e: DateEvent) => {
+    setEditingId(e.id);
+    setTitle(e.title);
+    setEventDate(e.date || "");
+    setEventType(e.event_type || "assignment");
+    setCourseId(e.course_id);
+    setHighStakes(!!e.is_high_stakes);
+    setDialogOpen(true);
+  };
+
+  const handleSave = async () => {
     if (!title.trim()) return toast.error("Title is required");
     if (!eventDate) return toast.error("Date is required");
     if (!courseId) return toast.error("Please select a course (create one first if none exist)");
@@ -90,22 +101,26 @@ export default function SmartCalendar() {
       return;
     }
 
-    const { error } = await supabase.from("syllabus_dates").insert({
+    const payload = {
       title: title.trim(),
       date: eventDate,
       event_type: eventType,
       course_id: courseId,
       is_high_stakes: highStakes,
-      user_id: userData.user.id,
-    });
+    };
+
+    const { error } = editingId
+      ? await supabase.from("syllabus_dates").update(payload).eq("id", editingId)
+      : await supabase.from("syllabus_dates").insert({ ...payload, user_id: userData.user.id });
 
     setSaving(false);
     if (error) {
       toast.error(error.message);
       return;
     }
-    toast.success("Event created");
+    toast.success(editingId ? "Event updated" : "Event created");
     setDialogOpen(false);
+    setEditingId(null);
     fetchAll();
   };
 
