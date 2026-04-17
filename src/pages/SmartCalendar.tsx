@@ -9,8 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
-import { motion } from "framer-motion";
-import { Calendar as CalIcon, AlertTriangle, CheckCircle2, Plus, Trash2, Pencil } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { motion, AnimatePresence } from "framer-motion";
+import { Calendar as CalIcon, AlertTriangle, CheckCircle2, Plus, Trash2, Pencil, X } from "lucide-react";
 import { format, parseISO, isAfter, isBefore, addDays } from "date-fns";
 import { toast } from "sonner";
 
@@ -35,6 +36,8 @@ export default function SmartCalendar() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
 
   // form state
   const [title, setTitle] = useState("");
@@ -129,6 +132,54 @@ export default function SmartCalendar() {
     if (error) return toast.error(error.message);
     toast.success("Event deleted");
     setEvents(prev => prev.filter(e => e.id !== id));
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const clearSelection = () => setSelectedIds(new Set());
+
+  const selectAllVisible = (evts: DateEvent[]) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      evts.forEach(e => next.add(e.id));
+      return next;
+    });
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+    setBulkBusy(true);
+    const ids = Array.from(selectedIds);
+    const { error } = await supabase.from("syllabus_dates").delete().in("id", ids);
+    setBulkBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success(`${ids.length} event${ids.length > 1 ? "s" : ""} deleted`);
+    setEvents(prev => prev.filter(e => !selectedIds.has(e.id)));
+    clearSelection();
+  };
+
+  const handleBulkTypeChange = async (newType: string) => {
+    if (selectedIds.size === 0) return;
+    setBulkBusy(true);
+    const ids = Array.from(selectedIds);
+    const { error } = await supabase.from("syllabus_dates").update({ event_type: newType }).in("id", ids);
+    setBulkBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success(`Updated type for ${ids.length} event${ids.length > 1 ? "s" : ""}`);
+    setEvents(prev => prev.map(e => (selectedIds.has(e.id) ? { ...e, event_type: newType } : e)));
+    clearSelection();
   };
 
   const filtered = filter === "all" ? events : events.filter(e => e.course_id === filter);
@@ -159,16 +210,33 @@ export default function SmartCalendar() {
     }
 
     const months = groupByMonth(evts);
+    const allVisibleSelected = evts.length > 0 && evts.every(e => selectedIds.has(e.id));
+
     return (
       <div className="space-y-6">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Checkbox
+            checked={allVisibleSelected}
+            onCheckedChange={(v) => (v ? selectAllVisible(evts) : clearSelection())}
+            aria-label="Select all visible"
+          />
+          <span>Select all visible ({evts.length})</span>
+        </div>
         {Object.entries(months).map(([month, items]) => (
           <div key={month}>
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">{month}</h2>
             <div className="space-y-2">
-              {items.map((e, i) => (
+              {items.map((e, i) => {
+                const checked = selectedIds.has(e.id);
+                return (
                 <motion.div key={e.id} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }}>
-                  <Card className={`glass-card-hover group ${isPast ? "opacity-60" : ""}`}>
-                    <CardContent className="flex items-center gap-4 py-3 px-4">
+                  <Card className={`glass-card-hover group ${isPast ? "opacity-60" : ""} ${checked ? "ring-2 ring-primary" : ""}`}>
+                    <CardContent className="flex items-center gap-3 py-3 px-4">
+                      <Checkbox
+                        checked={checked}
+                        onCheckedChange={() => toggleSelect(e.id)}
+                        aria-label={`Select ${e.title}`}
+                      />
                       <div className="text-center min-w-[48px]">
                         <p className="text-lg font-bold">{e.date ? format(parseISO(e.date), "d") : "?"}</p>
                         <p className="text-xs text-muted-foreground">{e.date ? format(parseISO(e.date), "EEE") : ""}</p>
@@ -208,7 +276,7 @@ export default function SmartCalendar() {
                     </CardContent>
                   </Card>
                 </motion.div>
-              ))}
+              );})}
             </div>
           </div>
         ))}
@@ -305,6 +373,52 @@ export default function SmartCalendar() {
           <TabsContent value="all">{renderEvents(filtered)}</TabsContent>
         </Tabs>
       )}
+
+      <AnimatePresence>
+        {selectedIds.size > 0 && (
+          <motion.div
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 80, opacity: 0 }}
+            transition={{ type: "spring", damping: 22, stiffness: 280 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
+          >
+            <div className="flex items-center gap-3 rounded-full border bg-background/95 backdrop-blur-md shadow-lg px-4 py-2">
+              <span className="text-sm font-medium">{selectedIds.size} selected</span>
+              <div className="h-5 w-px bg-border" />
+              <Select onValueChange={handleBulkTypeChange} disabled={bulkBusy}>
+                <SelectTrigger className="h-8 w-36 border-0 bg-secondary">
+                  <SelectValue placeholder="Change type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {EVENT_TYPES.map(t => (
+                    <SelectItem key={t} value={t} className="capitalize">{t}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleBulkDelete}
+                disabled={bulkBusy}
+                className="h-8 gap-1"
+              >
+                <Trash2 className="w-3.5 h-3.5" /> Delete
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={clearSelection}
+                disabled={bulkBusy}
+                className="h-8 w-8"
+                aria-label="Clear selection"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
