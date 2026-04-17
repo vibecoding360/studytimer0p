@@ -66,6 +66,33 @@ export default function SmartCalendar() {
     fetchAll();
   }, []);
 
+  // Keyboard shortcuts: Esc to clear selection, Delete/Backspace to bulk delete
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore when typing in inputs/textareas/contenteditable or when a dialog is open
+      const target = e.target as HTMLElement | null;
+      const isEditable =
+        !!target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          target.isContentEditable);
+      if (isEditable || dialogOpen) return;
+
+      if (e.key === "Escape" && selectedIds.size > 0) {
+        e.preventDefault();
+        clearSelection();
+        return;
+      }
+      if ((e.key === "Delete" || e.key === "Backspace") && selectedIds.size > 0 && !bulkBusy) {
+        e.preventDefault();
+        handleBulkDelete();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedIds, bulkBusy, dialogOpen]);
+
   const resetForm = () => {
     setTitle("");
     setEventDate("");
