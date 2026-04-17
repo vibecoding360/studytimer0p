@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { motion } from "framer-motion";
-import { Calendar as CalIcon, AlertTriangle, CheckCircle2, Plus, Trash2 } from "lucide-react";
+import { Calendar as CalIcon, AlertTriangle, CheckCircle2, Plus, Trash2, Pencil } from "lucide-react";
 import { format, parseISO, isAfter, isBefore, addDays } from "date-fns";
 import { toast } from "sonner";
 
