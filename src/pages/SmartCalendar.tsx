@@ -132,6 +132,54 @@ export default function SmartCalendar() {
     if (error) return toast.error(error.message);
     toast.success("Event deleted");
     setEvents(prev => prev.filter(e => e.id !== id));
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const clearSelection = () => setSelectedIds(new Set());
+
+  const selectAllVisible = (evts: DateEvent[]) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      evts.forEach(e => next.add(e.id));
+      return next;
+    });
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+    setBulkBusy(true);
+    const ids = Array.from(selectedIds);
+    const { error } = await supabase.from("syllabus_dates").delete().in("id", ids);
+    setBulkBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success(`${ids.length} event${ids.length > 1 ? "s" : ""} deleted`);
+    setEvents(prev => prev.filter(e => !selectedIds.has(e.id)));
+    clearSelection();
+  };
+
+  const handleBulkTypeChange = async (newType: string) => {
+    if (selectedIds.size === 0) return;
+    setBulkBusy(true);
+    const ids = Array.from(selectedIds);
+    const { error } = await supabase.from("syllabus_dates").update({ event_type: newType }).in("id", ids);
+    setBulkBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success(`Updated type for ${ids.length} event${ids.length > 1 ? "s" : ""}`);
+    setEvents(prev => prev.map(e => (selectedIds.has(e.id) ? { ...e, event_type: newType } : e)));
+    clearSelection();
   };
 
   const filtered = filter === "all" ? events : events.filter(e => e.course_id === filter);
