@@ -239,7 +239,7 @@ export default function SmartCalendar() {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Create Calendar Event</DialogTitle>
+                <DialogTitle>{editingId ? "Edit Calendar Event" : "Create Calendar Event"}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 py-2">
                 <div className="space-y-2">
