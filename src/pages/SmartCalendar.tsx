@@ -9,8 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
-import { motion } from "framer-motion";
-import { Calendar as CalIcon, AlertTriangle, CheckCircle2, Plus, Trash2, Pencil } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { motion, AnimatePresence } from "framer-motion";
+import { Calendar as CalIcon, AlertTriangle, CheckCircle2, Plus, Trash2, Pencil, X } from "lucide-react";
 import { format, parseISO, isAfter, isBefore, addDays } from "date-fns";
 import { toast } from "sonner";
 
