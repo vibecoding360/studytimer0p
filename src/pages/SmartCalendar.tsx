@@ -373,6 +373,52 @@ export default function SmartCalendar() {
           <TabsContent value="all">{renderEvents(filtered)}</TabsContent>
         </Tabs>
       )}
+
+      <AnimatePresence>
+        {selectedIds.size > 0 && (
+          <motion.div
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 80, opacity: 0 }}
+            transition={{ type: "spring", damping: 22, stiffness: 280 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
+          >
+            <div className="flex items-center gap-3 rounded-full border bg-background/95 backdrop-blur-md shadow-lg px-4 py-2">
+              <span className="text-sm font-medium">{selectedIds.size} selected</span>
+              <div className="h-5 w-px bg-border" />
+              <Select onValueChange={handleBulkTypeChange} disabled={bulkBusy}>
+                <SelectTrigger className="h-8 w-36 border-0 bg-secondary">
+                  <SelectValue placeholder="Change type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {EVENT_TYPES.map(t => (
+                    <SelectItem key={t} value={t} className="capitalize">{t}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleBulkDelete}
+                disabled={bulkBusy}
+                className="h-8 gap-1"
+              >
+                <Trash2 className="w-3.5 h-3.5" /> Delete
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={clearSelection}
+                disabled={bulkBusy}
+                className="h-8 w-8"
+                aria-label="Clear selection"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
