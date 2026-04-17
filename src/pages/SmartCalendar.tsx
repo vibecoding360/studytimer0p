@@ -210,16 +210,33 @@ export default function SmartCalendar() {
     }
 
     const months = groupByMonth(evts);
+    const allVisibleSelected = evts.length > 0 && evts.every(e => selectedIds.has(e.id));
+
     return (
       <div className="space-y-6">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Checkbox
+            checked={allVisibleSelected}
+            onCheckedChange={(v) => (v ? selectAllVisible(evts) : clearSelection())}
+            aria-label="Select all visible"
+          />
+          <span>Select all visible ({evts.length})</span>
+        </div>
         {Object.entries(months).map(([month, items]) => (
           <div key={month}>
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">{month}</h2>
             <div className="space-y-2">
-              {items.map((e, i) => (
+              {items.map((e, i) => {
+                const checked = selectedIds.has(e.id);
+                return (
                 <motion.div key={e.id} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }}>
-                  <Card className={`glass-card-hover group ${isPast ? "opacity-60" : ""}`}>
-                    <CardContent className="flex items-center gap-4 py-3 px-4">
+                  <Card className={`glass-card-hover group ${isPast ? "opacity-60" : ""} ${checked ? "ring-2 ring-primary" : ""}`}>
+                    <CardContent className="flex items-center gap-3 py-3 px-4">
+                      <Checkbox
+                        checked={checked}
+                        onCheckedChange={() => toggleSelect(e.id)}
+                        aria-label={`Select ${e.title}`}
+                      />
                       <div className="text-center min-w-[48px]">
                         <p className="text-lg font-bold">{e.date ? format(parseISO(e.date), "d") : "?"}</p>
                         <p className="text-xs text-muted-foreground">{e.date ? format(parseISO(e.date), "EEE") : ""}</p>
@@ -259,7 +276,7 @@ export default function SmartCalendar() {
                     </CardContent>
                   </Card>
                 </motion.div>
-              ))}
+              );})}
             </div>
           </div>
         ))}
