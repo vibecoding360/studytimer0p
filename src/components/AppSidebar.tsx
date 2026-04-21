@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
-import { LayoutDashboard, Zap, LogOut, ChevronLeft, ChevronRight, Search, CalendarDays, GraduationCap } from "lucide-react";
+import { useAdmin } from "@/hooks/use-admin";
+import { LayoutDashboard, Zap, LogOut, ChevronLeft, ChevronRight, Search, CalendarDays, GraduationCap, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -23,6 +24,10 @@ export default function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const { isAdmin } = useAdmin();
+  const items = isAdmin
+    ? [...navItems, { icon: ShieldCheck, label: "Admin", path: "/admin" }]
+    : navItems;
 
   const handleSignOut = async () => {
     await signOut();
@@ -49,7 +54,7 @@ export default function AppSidebar() {
       </div>
 
       <nav className="flex-1 flex flex-col gap-0.5">
-        {navItems.map(({ icon: Icon, label, path }) => {
+        {items.map(({ icon: Icon, label, path }) => {
           const active = location.pathname === path;
           return (
             <Link
