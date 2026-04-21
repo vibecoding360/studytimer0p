@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import { useAdmin } from "@/hooks/use-admin";
-import { LayoutDashboard, Zap, LogOut, ChevronLeft, ChevronRight, Search, CalendarDays, GraduationCap, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, Zap, LogOut, ChevronLeft, ChevronRight, Search, CalendarDays, GraduationCap, ShieldCheck, BookOpen } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -16,6 +16,7 @@ const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
   { icon: Zap, label: "Mastery Hub", path: "/timer" },
   { icon: CalendarDays, label: "365 Challenge", path: "/365" },
+  { icon: BookOpen, label: "Courses", path: "/courses" },
 ];
 
 export default function AppSidebar() {

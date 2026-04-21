@@ -15,6 +15,7 @@ import GradeCalculator from "@/pages/GradeCalculator";
 import StudyArchitect from "@/pages/StudyArchitect";
 import StudyTimer from "@/pages/StudyTimer";
 import HabitTracker from "@/pages/HabitTracker";
+import Courses from "@/pages/Courses";
 import AdminLogin from "@/pages/admin/AdminLogin";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminGuard from "@/components/admin/AdminGuard";
@@ -55,6 +56,7 @@ const App = () => (
               <Route path="/study-architect" element={<StudyArchitect />} />
               <Route path="/timer" element={<StudyTimer />} />
               <Route path="/365" element={<HabitTracker />} />
+              <Route path="/courses" element={<Courses />} />
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin" element={<AdminGuard><AdminDashboard /></AdminGuard>} />
             </Route>
