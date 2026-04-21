@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
-import { LayoutDashboard, Zap, LogOut, ChevronLeft, ChevronRight, Search, CalendarDays } from "lucide-react";
+import { LayoutDashboard, Zap, LogOut, ChevronLeft, ChevronRight, Search, CalendarDays, GraduationCap } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -36,11 +36,16 @@ export default function AppSidebar() {
       transition={{ duration: 0.2, ease: "easeInOut" }}
       className="h-screen sticky top-0 flex flex-col border-r border-border/50 bg-sidebar p-3 gap-1"
     >
-      <div className={cn("flex items-center gap-2.5 px-2 py-3 mb-2", collapsed && "justify-center")}>
-        <div className="w-8 h-8 rounded-lg bg-success/15 flex items-center justify-center shrink-0">
-          <Zap className="w-4 h-4 text-success" />
+      <div className={cn("flex items-center gap-2.5 px-2 py-3 mb-2 border-b border-sidebar-border", collapsed && "justify-center")}>
+        <div className="w-9 h-9 rounded-full border-2 border-accent/70 flex items-center justify-center shrink-0 bg-sidebar-accent">
+          <GraduationCap className="w-4 h-4 text-accent" />
         </div>
-        {!collapsed && <span className="font-bold text-sm tracking-tight text-primary">MatrixMindset</span>}
+        {!collapsed && (
+          <div className="leading-tight">
+            <span className="font-serif text-sm font-semibold tracking-wide text-sidebar-foreground block">MatrixMindset</span>
+            <span className="text-[9px] uppercase tracking-[0.2em] text-accent/80">Institutum</span>
+          </div>
+        )}
       </div>
 
       <nav className="flex-1 flex flex-col gap-0.5">
