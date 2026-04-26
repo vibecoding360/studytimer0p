@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "@/lib/auth";
 
 import AppLayout from "@/components/AppLayout";
 import Auth from "@/pages/Auth";
+import ResetPassword from "@/pages/ResetPassword";
 import Dashboard from "@/pages/Index";
 import ParseSyllabus from "@/pages/ParseSyllabus";
 import SmartCalendar from "@/pages/SmartCalendar";
@@ -48,6 +49,7 @@ const App = () => (
           <AuthProvider>
             <Routes>
             <Route path="/auth" element={<AuthRoute />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route path="/" element={<Dashboard />} />
               <Route path="/parse" element={<ParseSyllabus />} />

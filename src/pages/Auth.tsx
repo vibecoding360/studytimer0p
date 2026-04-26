@@ -38,6 +38,8 @@ function passwordScore(pwd: string) {
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
+  const [forgotMode, setForgotMode] = useState(false); // password reset flow
+  const [resetSent, setResetSent] = useState(false);
   const [step, setStep] = useState(0); // signup: 0 = name, 1 = email, 2 = password
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -47,7 +49,7 @@ export default function Auth() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, resetPassword } = useAuth();
   const navigate = useNavigate();
 
   // Live validation: only show error if field has been touched
@@ -78,9 +80,49 @@ export default function Auth() {
 
   const switchMode = (login: boolean) => {
     setIsLogin(login);
+    setForgotMode(false);
+    setResetSent(false);
     setStep(0);
     setErrors({});
     setTouched({});
+  };
+
+  const enterForgotMode = () => {
+    setForgotMode(true);
+    setResetSent(false);
+    setErrors({});
+    setTouched({});
+  };
+
+  const exitForgotMode = () => {
+    setForgotMode(false);
+    setResetSent(false);
+    setErrors({});
+    setTouched({});
+  };
+
+  const handleForgotSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const r = emailSchema.safeParse(email);
+    setTouched((t) => ({ ...t, email: true }));
+    if (!r.success) {
+      setErrors({ email: r.error.issues[0].message });
+      return;
+    }
+    setErrors({});
+    setLoading(true);
+    try {
+      await resetPassword(email);
+    } catch {
+      // Intentionally swallow — never disclose whether account exists.
+    } finally {
+      setResetSent(true);
+      setLoading(false);
+      toast({
+        title: "Reset link sent",
+        description: "If an account exists for that email, a reset link is on its way.",
+      });
+    }
   };
 
   const validateCurrentStep = (): boolean => {
@@ -246,34 +288,36 @@ export default function Auth() {
             <div className="text-center mb-6">
               <p className="text-[10px] uppercase tracking-[0.3em] text-accent font-semibold mb-2">Student Portal</p>
               <h2 className="font-serif text-3xl font-bold tracking-tight text-primary">
-                {isLogin ? "Welcome Back, Topper" : "Begin Your Journey"}
+                {forgotMode ? "Reset Your Password" : isLogin ? "Welcome Back, Topper" : "Begin Your Journey"}
               </h2>
               <div className="gold-rule w-24 mx-auto mt-3" />
             </div>
 
             <div className="bg-card border-2 border-border rounded-md p-7 shadow-lg relative">
-              <div className="ribbon">Free Trial</div>
+              {!forgotMode && <div className="ribbon">Free Trial</div>}
 
-              {/* Mode tabs */}
-              <div className="flex gap-1 mb-5 mt-3 p-1 rounded-md bg-secondary border border-border">
-                <button
-                  type="button"
-                  onClick={() => switchMode(true)}
-                  className={`flex-1 py-2 text-sm font-semibold rounded-sm transition-all duration-200 ${isLogin ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
-                >
-                  Sign In
-                </button>
-                <button
-                  type="button"
-                  onClick={() => switchMode(false)}
-                  className={`flex-1 py-2 text-sm font-semibold rounded-sm transition-all duration-200 ${!isLogin ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
-                >
-                  Register
-                </button>
-              </div>
+              {/* Mode tabs (hidden in forgot mode) */}
+              {!forgotMode && (
+                <div className="flex gap-1 mb-5 mt-3 p-1 rounded-md bg-secondary border border-border">
+                  <button
+                    type="button"
+                    onClick={() => switchMode(true)}
+                    className={`flex-1 py-2 text-sm font-semibold rounded-sm transition-all duration-200 ${isLogin ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => switchMode(false)}
+                    className={`flex-1 py-2 text-sm font-semibold rounded-sm transition-all duration-200 ${!isLogin ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+                  >
+                    Register
+                  </button>
+                </div>
+              )}
 
               {/* Step progress (signup only) */}
-              {!isLogin && (
+              {!isLogin && !forgotMode && (
                 <div className="mb-5">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-primary">
@@ -294,6 +338,7 @@ export default function Auth() {
                 </div>
               )}
 
+              {!forgotMode && (
               <form onSubmit={handleSubmit} className="space-y-4" noValidate>
                 <AnimatePresence mode="wait" custom={stepDirection}>
                   {/* === LOGIN: single combined step === */}
@@ -321,6 +366,15 @@ export default function Auth() {
                         show={showPassword}
                         toggleShow={() => setShowPassword((s) => !s)}
                       />
+                      <div className="flex justify-end -mt-1">
+                        <button
+                          type="button"
+                          onClick={enterForgotMode}
+                          className="text-xs font-semibold text-primary hover:text-accent transition-colors underline-offset-4 hover:underline"
+                        >
+                          Forgot password?
+                        </button>
+                      </div>
                     </motion.div>
                   )}
 
@@ -475,6 +529,101 @@ export default function Auth() {
                   )}
                 </div>
               </form>
+              )}
+
+              {/* === FORGOT PASSWORD PANEL === */}
+              {forgotMode && (
+                <AnimatePresence mode="wait">
+                  {!resetSent ? (
+                    <motion.form
+                      key="forgot-form"
+                      onSubmit={handleForgotSubmit}
+                      initial={{ opacity: 0, x: 24, filter: "blur(4px)" }}
+                      animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, x: -24, filter: "blur(4px)" }}
+                      transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
+                      className="space-y-4 mt-3"
+                      noValidate
+                    >
+                      <p className="text-sm text-muted-foreground font-serif italic">
+                        Enter the email associated with your MatrixMindset account and we'll send you a secure link to reset your password.
+                      </p>
+                      <FieldEmail
+                        autoFocus
+                        value={email}
+                        onChange={(v) => { setEmail(v); if (errors.email) setErrors((e) => ({ ...e, email: undefined })); }}
+                        onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+                        error={liveErrors.email}
+                        valid={touched.email && !liveErrors.email && emailSchema.safeParse(email).success}
+                      />
+                      <div className="flex gap-2 pt-1">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={exitForgotMode}
+                          disabled={loading}
+                          className="h-12 px-4 gap-1"
+                        >
+                          <ArrowLeft className="w-4 h-4" /> Back
+                        </Button>
+                        <Button
+                          type="submit"
+                          disabled={loading}
+                          className="flex-1 gap-2 institute-cta h-12 text-base font-bold uppercase tracking-wider"
+                        >
+                          {loading ? (
+                            <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</>
+                          ) : (
+                            <>Send Reset Link <ArrowRight className="w-4 h-4" /></>
+                          )}
+                        </Button>
+                      </div>
+                    </motion.form>
+                  ) : (
+                    <motion.div
+                      key="forgot-success"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                      className="text-center py-4 space-y-3 mt-3"
+                    >
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 18 }}
+                        className="seal w-14 h-14 rounded-full flex items-center justify-center mx-auto"
+                      >
+                        <Check className="w-6 h-6" />
+                      </motion.div>
+                      <h3 className="font-serif text-xl font-bold text-primary">Check your inbox</h3>
+                      <p className="text-sm text-muted-foreground">
+                        If an account exists for{" "}
+                        <span className="font-semibold text-foreground">{email}</span>, a password reset link is on its way. The link expires in 60 minutes.
+                      </p>
+                      <p className="text-[11px] text-muted-foreground italic">
+                        Didn't get it? Check your spam folder or try again in a minute.
+                      </p>
+                      <div className="flex gap-2 pt-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setResetSent(false)}
+                          className="flex-1 h-11"
+                        >
+                          Try another email
+                        </Button>
+                        <Button
+                          type="button"
+                          onClick={() => switchMode(true)}
+                          className="flex-1 h-11 institute-cta font-bold uppercase tracking-wider"
+                        >
+                          Back to Sign In
+                        </Button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              )}
 
               <div className="mt-5 pt-4 border-t border-border text-center">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
