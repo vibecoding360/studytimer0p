@@ -195,4 +195,92 @@
   .timer-urgency-pulse {
     animation: urgency-pulse 1s ease-in-out infinite;
   }
+
+  /* === Coaching-institute UI (Akash/Allen-inspired) === */
+  .institute-hero {
+    background:
+      radial-gradient(circle at 12% 18%, hsl(var(--accent) / 0.18), transparent 45%),
+      radial-gradient(circle at 88% 82%, hsl(var(--accent) / 0.12), transparent 50%),
+      linear-gradient(135deg, hsl(220 70% 14%), hsl(220 65% 22%) 55%, hsl(220 60% 28%));
+    color: hsl(var(--primary-foreground));
+  }
+  .institute-hero-light {
+    background:
+      radial-gradient(circle at 100% 0%, hsl(var(--accent) / 0.18), transparent 40%),
+      linear-gradient(135deg, hsl(var(--background)), hsl(var(--secondary)));
+  }
+  .ribbon {
+    position: absolute;
+    top: 12px;
+    left: -6px;
+    background: linear-gradient(90deg, hsl(var(--accent)), hsl(38 85% 48%));
+    color: hsl(var(--accent-foreground));
+    padding: 4px 12px 4px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    box-shadow: 0 2px 6px hsl(220 50% 14% / 0.25);
+    clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 50%, 100% 100%, 0 100%);
+  }
+  .ribbon::before {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    border-top: 6px solid hsl(38 70% 30%);
+    border-left: 6px solid transparent;
+  }
+  .stat-card {
+    @apply rounded-md border border-border bg-card p-4 text-center;
+    box-shadow: 0 1px 0 hsl(var(--accent) / 0.4) inset;
+  }
+  .stat-number {
+    @apply font-serif text-3xl md:text-4xl font-bold text-primary;
+    letter-spacing: -0.02em;
+  }
+  .badge-topper {
+    background: linear-gradient(90deg, hsl(var(--accent)), hsl(38 90% 55%));
+    color: hsl(var(--accent-foreground));
+    @apply text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm;
+  }
+  .badge-jee, .badge-neet, .badge-foundation {
+    @apply text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm border;
+  }
+  .badge-jee   { background: hsl(220 80% 95%); color: hsl(220 70% 30%); border-color: hsl(220 50% 75%); }
+  .badge-neet  { background: hsl(145 50% 92%); color: hsl(145 60% 24%); border-color: hsl(145 40% 65%); }
+  .badge-foundation { background: hsl(38 85% 92%); color: hsl(38 75% 28%); border-color: hsl(38 60% 65%); }
+
+  .helpline-strip {
+    background: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+    @apply text-xs font-medium;
+  }
+  .marquee {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .marquee-track {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 28s linear infinite;
+  }
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+  .institute-cta {
+    background: linear-gradient(90deg, hsl(var(--accent)), hsl(38 90% 50%));
+    color: hsl(var(--accent-foreground));
+    box-shadow: 0 8px 24px hsl(38 70% 40% / 0.3);
+  }
+  .institute-cta:hover { filter: brightness(1.05); }
+  .double-rule {
+    border-top: 3px double hsl(var(--accent) / 0.6);
+  }
+  .seal {
+    background: radial-gradient(circle at 30% 30%, hsl(var(--accent)), hsl(38 70% 35%));
+    color: hsl(var(--accent-foreground));
+    box-shadow: 0 0 0 3px hsl(var(--background)), 0 0 0 5px hsl(var(--accent) / 0.6);
+  }
 }
