@@ -317,7 +317,7 @@ export default function Auth() {
               )}
 
               {/* Step progress (signup only) */}
-              {!isLogin && (
+              {!isLogin && !forgotMode && (
                 <div className="mb-5">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-primary">
