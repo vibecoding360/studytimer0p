@@ -288,31 +288,33 @@ export default function Auth() {
             <div className="text-center mb-6">
               <p className="text-[10px] uppercase tracking-[0.3em] text-accent font-semibold mb-2">Student Portal</p>
               <h2 className="font-serif text-3xl font-bold tracking-tight text-primary">
-                {isLogin ? "Welcome Back, Topper" : "Begin Your Journey"}
+                {forgotMode ? "Reset Your Password" : isLogin ? "Welcome Back, Topper" : "Begin Your Journey"}
               </h2>
               <div className="gold-rule w-24 mx-auto mt-3" />
             </div>
 
             <div className="bg-card border-2 border-border rounded-md p-7 shadow-lg relative">
-              <div className="ribbon">Free Trial</div>
+              {!forgotMode && <div className="ribbon">Free Trial</div>}
 
-              {/* Mode tabs */}
-              <div className="flex gap-1 mb-5 mt-3 p-1 rounded-md bg-secondary border border-border">
-                <button
-                  type="button"
-                  onClick={() => switchMode(true)}
-                  className={`flex-1 py-2 text-sm font-semibold rounded-sm transition-all duration-200 ${isLogin ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
-                >
-                  Sign In
-                </button>
-                <button
-                  type="button"
-                  onClick={() => switchMode(false)}
-                  className={`flex-1 py-2 text-sm font-semibold rounded-sm transition-all duration-200 ${!isLogin ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
-                >
-                  Register
-                </button>
-              </div>
+              {/* Mode tabs (hidden in forgot mode) */}
+              {!forgotMode && (
+                <div className="flex gap-1 mb-5 mt-3 p-1 rounded-md bg-secondary border border-border">
+                  <button
+                    type="button"
+                    onClick={() => switchMode(true)}
+                    className={`flex-1 py-2 text-sm font-semibold rounded-sm transition-all duration-200 ${isLogin ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => switchMode(false)}
+                    className={`flex-1 py-2 text-sm font-semibold rounded-sm transition-all duration-200 ${!isLogin ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+                  >
+                    Register
+                  </button>
+                </div>
+              )}
 
               {/* Step progress (signup only) */}
               {!isLogin && (
