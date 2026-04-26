@@ -520,6 +520,101 @@ export default function Auth() {
                   )}
                 </div>
               </form>
+              )}
+
+              {/* === FORGOT PASSWORD PANEL === */}
+              {forgotMode && (
+                <AnimatePresence mode="wait">
+                  {!resetSent ? (
+                    <motion.form
+                      key="forgot-form"
+                      onSubmit={handleForgotSubmit}
+                      initial={{ opacity: 0, x: 24, filter: "blur(4px)" }}
+                      animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, x: -24, filter: "blur(4px)" }}
+                      transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
+                      className="space-y-4 mt-3"
+                      noValidate
+                    >
+                      <p className="text-sm text-muted-foreground font-serif italic">
+                        Enter the email associated with your MatrixMindset account and we'll send you a secure link to reset your password.
+                      </p>
+                      <FieldEmail
+                        autoFocus
+                        value={email}
+                        onChange={(v) => { setEmail(v); if (errors.email) setErrors((e) => ({ ...e, email: undefined })); }}
+                        onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+                        error={liveErrors.email}
+                        valid={touched.email && !liveErrors.email && emailSchema.safeParse(email).success}
+                      />
+                      <div className="flex gap-2 pt-1">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={exitForgotMode}
+                          disabled={loading}
+                          className="h-12 px-4 gap-1"
+                        >
+                          <ArrowLeft className="w-4 h-4" /> Back
+                        </Button>
+                        <Button
+                          type="submit"
+                          disabled={loading}
+                          className="flex-1 gap-2 institute-cta h-12 text-base font-bold uppercase tracking-wider"
+                        >
+                          {loading ? (
+                            <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</>
+                          ) : (
+                            <>Send Reset Link <ArrowRight className="w-4 h-4" /></>
+                          )}
+                        </Button>
+                      </div>
+                    </motion.form>
+                  ) : (
+                    <motion.div
+                      key="forgot-success"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                      className="text-center py-4 space-y-3 mt-3"
+                    >
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 18 }}
+                        className="seal w-14 h-14 rounded-full flex items-center justify-center mx-auto"
+                      >
+                        <Check className="w-6 h-6" />
+                      </motion.div>
+                      <h3 className="font-serif text-xl font-bold text-primary">Check your inbox</h3>
+                      <p className="text-sm text-muted-foreground">
+                        If an account exists for{" "}
+                        <span className="font-semibold text-foreground">{email}</span>, a password reset link is on its way. The link expires in 60 minutes.
+                      </p>
+                      <p className="text-[11px] text-muted-foreground italic">
+                        Didn't get it? Check your spam folder or try again in a minute.
+                      </p>
+                      <div className="flex gap-2 pt-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setResetSent(false)}
+                          className="flex-1 h-11"
+                        >
+                          Try another email
+                        </Button>
+                        <Button
+                          type="button"
+                          onClick={() => switchMode(true)}
+                          className="flex-1 h-11 institute-cta font-bold uppercase tracking-wider"
+                        >
+                          Back to Sign In
+                        </Button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              )}
 
               <div className="mt-5 pt-4 border-t border-border text-center">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
