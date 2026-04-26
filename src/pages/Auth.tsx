@@ -366,6 +366,15 @@ export default function Auth() {
                         show={showPassword}
                         toggleShow={() => setShowPassword((s) => !s)}
                       />
+                      <div className="flex justify-end -mt-1">
+                        <button
+                          type="button"
+                          onClick={enterForgotMode}
+                          className="text-xs font-semibold text-primary hover:text-accent transition-colors underline-offset-4 hover:underline"
+                        >
+                          Forgot password?
+                        </button>
+                      </div>
                     </motion.div>
                   )}
 
