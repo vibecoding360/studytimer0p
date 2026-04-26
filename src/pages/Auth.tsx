@@ -80,9 +80,49 @@ export default function Auth() {
 
   const switchMode = (login: boolean) => {
     setIsLogin(login);
+    setForgotMode(false);
+    setResetSent(false);
     setStep(0);
     setErrors({});
     setTouched({});
+  };
+
+  const enterForgotMode = () => {
+    setForgotMode(true);
+    setResetSent(false);
+    setErrors({});
+    setTouched({});
+  };
+
+  const exitForgotMode = () => {
+    setForgotMode(false);
+    setResetSent(false);
+    setErrors({});
+    setTouched({});
+  };
+
+  const handleForgotSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const r = emailSchema.safeParse(email);
+    setTouched((t) => ({ ...t, email: true }));
+    if (!r.success) {
+      setErrors({ email: r.error.issues[0].message });
+      return;
+    }
+    setErrors({});
+    setLoading(true);
+    try {
+      await resetPassword(email);
+    } catch {
+      // Intentionally swallow — never disclose whether account exists.
+    } finally {
+      setResetSent(true);
+      setLoading(false);
+      toast({
+        title: "Reset link sent",
+        description: "If an account exists for that email, a reset link is on its way.",
+      });
+    }
   };
 
   const validateCurrentStep = (): boolean => {
