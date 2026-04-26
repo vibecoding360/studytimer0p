@@ -38,6 +38,8 @@ function passwordScore(pwd: string) {
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
+  const [forgotMode, setForgotMode] = useState(false); // password reset flow
+  const [resetSent, setResetSent] = useState(false);
   const [step, setStep] = useState(0); // signup: 0 = name, 1 = email, 2 = password
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -47,7 +49,7 @@ export default function Auth() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, resetPassword } = useAuth();
   const navigate = useNavigate();
 
   // Live validation: only show error if field has been touched
