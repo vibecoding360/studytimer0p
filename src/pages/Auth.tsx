@@ -338,6 +338,7 @@ export default function Auth() {
                 </div>
               )}
 
+              {!forgotMode && (
               <form onSubmit={handleSubmit} className="space-y-4" noValidate>
                 <AnimatePresence mode="wait" custom={stepDirection}>
                   {/* === LOGIN: single combined step === */}
