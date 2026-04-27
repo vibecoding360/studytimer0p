@@ -63,7 +63,9 @@ export default function AppSidebar() {
               to={path}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
-                active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-accent",
+                active
+                  ? "bg-sidebar-accent text-accent border border-accent/30 shadow-sm"
+                  : "text-sidebar-foreground/75 hover:text-sidebar-foreground hover:bg-sidebar-accent/60",
                 collapsed && "justify-center px-0"
               )}
               title={collapsed ? label : undefined}
@@ -79,7 +81,7 @@ export default function AppSidebar() {
         <button
           onClick={() => document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }))}
           className={cn(
-            "flex items-center gap-3 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-accent transition-all",
+            "flex items-center gap-3 px-3 py-2 rounded-lg text-xs text-sidebar-foreground/65 hover:text-sidebar-foreground hover:bg-sidebar-accent/60 transition-all",
             collapsed && "justify-center px-0"
           )}
           title="Search (⌘K)"
@@ -88,7 +90,7 @@ export default function AppSidebar() {
           {!collapsed && (
             <>
               <span>Search</span>
-              <kbd className="ml-auto text-[10px] font-mono bg-secondary px-1.5 py-0.5 rounded">⌘K</kbd>
+              <kbd className="ml-auto text-[10px] font-mono bg-sidebar-accent/80 text-sidebar-foreground px-1.5 py-0.5 rounded border border-sidebar-border">⌘K</kbd>
             </>
           )}
         </button>
@@ -96,7 +98,7 @@ export default function AppSidebar() {
           variant="ghost"
           size="sm"
           onClick={() => setCollapsed(!collapsed)}
-          className="w-full justify-center"
+          className="w-full justify-center text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent/60"
         >
           {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
         </Button>
@@ -104,7 +106,7 @@ export default function AppSidebar() {
           <button
             onClick={() => setShowSignOutDialog(true)}
             className={cn(
-              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all",
+              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground/75 hover:text-destructive-foreground hover:bg-destructive/80 transition-all",
               collapsed && "justify-center px-0"
             )}
             title={collapsed ? "Sign Out" : undefined}
