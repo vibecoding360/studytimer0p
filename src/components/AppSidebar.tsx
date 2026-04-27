@@ -63,7 +63,9 @@ export default function AppSidebar() {
               to={path}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
-                active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-accent",
+                active
+                  ? "bg-sidebar-accent text-accent border border-accent/30 shadow-sm"
+                  : "text-sidebar-foreground/75 hover:text-sidebar-foreground hover:bg-sidebar-accent/60",
                 collapsed && "justify-center px-0"
               )}
               title={collapsed ? label : undefined}
