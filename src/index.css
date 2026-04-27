@@ -6,99 +6,115 @@
 
 @layer base {
   :root {
-    /* Collegiate light theme — ivory parchment + navy + gold */
-    --background: 40 30% 96%;
-    --foreground: 220 50% 14%;
+    /* Premium light theme — soft sage + heritage gold + silver */
+    --background: 140 20% 97%;          /* mist sage white */
+    --foreground: 150 30% 12%;          /* deep forest ink */
     --card: 0 0% 100%;
-    --card-foreground: 220 50% 14%;
+    --card-foreground: 150 30% 12%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 50% 14%;
-    --primary: 220 65% 22%;            /* university navy */
-    --primary-foreground: 40 40% 96%;
-    --secondary: 40 25% 92%;
-    --secondary-foreground: 220 50% 18%;
-    --muted: 40 20% 90%;
-    --muted-foreground: 220 15% 38%;
-    --accent: 42 65% 52%;              /* heritage gold */
-    --accent-foreground: 220 60% 14%;
-    --destructive: 0 65% 42%;          /* crimson */
+    --popover-foreground: 150 30% 12%;
+    --primary: 150 35% 24%;             /* deep emerald-sage */
+    --primary-foreground: 45 50% 96%;
+    --secondary: 145 22% 92%;           /* light sage */
+    --secondary-foreground: 150 35% 18%;
+    --muted: 145 18% 90%;
+    --muted-foreground: 150 12% 38%;
+    --accent: 42 72% 52%;               /* heritage gold */
+    --accent-foreground: 150 35% 14%;
+    --destructive: 0 65% 45%;
     --destructive-foreground: 0 0% 100%;
-    --border: 40 20% 82%;
-    --input: 40 20% 86%;
-    --ring: 220 65% 30%;
-    --radius: 0.375rem;
-    --success: 145 55% 30%;            /* ivy green */
-    --success-foreground: 40 40% 96%;
-    --warning: 38 85% 48%;
-    --warning-foreground: 220 60% 14%;
+    --border: 145 15% 82%;              /* silver-sage rule */
+    --input: 145 15% 86%;
+    --ring: 42 72% 50%;
+    --radius: 0.5rem;
+    --success: 145 55% 32%;
+    --success-foreground: 45 50% 96%;
+    --warning: 38 85% 50%;
+    --warning-foreground: 150 35% 14%;
     --coral: 6 75% 50%;
     --coral-foreground: 0 0% 100%;
     --glass: 0 0% 100% / 0.85;
-    --glass-border: 220 30% 80% / 0.5;
+    --glass-border: 145 20% 80% / 0.5;
 
-    --sidebar-background: 220 65% 18%;
-    --sidebar-foreground: 40 30% 92%;
-    --sidebar-primary: 42 65% 52%;
-    --sidebar-primary-foreground: 220 60% 14%;
-    --sidebar-accent: 220 55% 24%;
-    --sidebar-accent-foreground: 40 30% 95%;
-    --sidebar-border: 220 50% 28%;
-    --sidebar-ring: 42 65% 52%;
+    /* Brand-specific tokens */
+    --silver: 220 8% 78%;
+    --silver-deep: 220 6% 60%;
+    --silver-light: 220 12% 92%;
+    --gold-glow: 42 90% 60%;
+    --gold-deep: 38 80% 38%;
+    --sage-mist: 140 30% 94%;
+    --sage-deep: 150 40% 20%;
 
-    /* Timer state tokens */
-    --timer-focus: 220 65% 30%;
-    --timer-focus-glow: 220 65% 30% / 0.18;
-    --timer-break: 42 65% 52%;
-    --timer-break-glow: 42 65% 52% / 0.18;
-    --timer-urgency: 0 65% 45%;
-    --timer-urgency-glow: 0 65% 45% / 0.25;
+    --sidebar-background: 150 40% 16%;
+    --sidebar-foreground: 45 30% 92%;
+    --sidebar-primary: 42 72% 55%;
+    --sidebar-primary-foreground: 150 40% 14%;
+    --sidebar-accent: 150 30% 22%;
+    --sidebar-accent-foreground: 45 30% 95%;
+    --sidebar-border: 150 30% 26%;
+    --sidebar-ring: 42 72% 55%;
+
+    --timer-focus: 150 35% 28%;
+    --timer-focus-glow: 150 35% 28% / 0.18;
+    --timer-break: 42 72% 52%;
+    --timer-break-glow: 42 72% 52% / 0.18;
+    --timer-urgency: 0 65% 48%;
+    --timer-urgency-glow: 0 65% 48% / 0.25;
   }
 
   .dark {
-    /* Collegiate dark — midnight navy + gold leaf */
-    --background: 220 45% 8%;
-    --foreground: 40 30% 92%;
-    --card: 220 40% 11%;
-    --card-foreground: 40 30% 92%;
-    --popover: 220 40% 11%;
-    --popover-foreground: 40 30% 92%;
-    --primary: 42 70% 58%;             /* gold becomes primary in dark */
-    --primary-foreground: 220 60% 12%;
-    --secondary: 220 35% 16%;
-    --secondary-foreground: 40 30% 90%;
-    --muted: 220 30% 16%;
-    --muted-foreground: 40 15% 65%;
-    --accent: 42 70% 58%;
-    --accent-foreground: 220 60% 12%;
-    --destructive: 0 60% 48%;
+    /* Dark — forest night + gold leaf + silver */
+    --background: 150 28% 8%;
+    --foreground: 45 30% 92%;
+    --card: 150 25% 11%;
+    --card-foreground: 45 30% 92%;
+    --popover: 150 25% 11%;
+    --popover-foreground: 45 30% 92%;
+    --primary: 42 75% 58%;
+    --primary-foreground: 150 40% 12%;
+    --secondary: 150 20% 16%;
+    --secondary-foreground: 45 30% 90%;
+    --muted: 150 18% 16%;
+    --muted-foreground: 45 12% 68%;
+    --accent: 42 75% 58%;
+    --accent-foreground: 150 40% 12%;
+    --destructive: 0 60% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 30% 22%;
-    --input: 220 30% 20%;
-    --ring: 42 70% 58%;
-    --success: 145 50% 45%;
-    --success-foreground: 220 60% 12%;
-    --warning: 38 85% 55%;
-    --warning-foreground: 220 60% 12%;
+    --border: 150 18% 22%;
+    --input: 150 18% 20%;
+    --ring: 42 75% 58%;
+    --success: 145 50% 50%;
+    --success-foreground: 150 40% 12%;
+    --warning: 38 85% 58%;
+    --warning-foreground: 150 40% 12%;
     --coral: 6 75% 55%;
     --coral-foreground: 0 0% 100%;
-    --glass: 220 40% 11% / 0.85;
-    --glass-border: 42 50% 50% / 0.15;
+    --glass: 150 25% 11% / 0.85;
+    --glass-border: 42 50% 50% / 0.18;
 
-    --sidebar-background: 220 50% 10%;
-    --sidebar-foreground: 40 30% 88%;
-    --sidebar-primary: 42 70% 58%;
-    --sidebar-primary-foreground: 220 60% 12%;
-    --sidebar-accent: 220 40% 16%;
-    --sidebar-accent-foreground: 40 30% 92%;
-    --sidebar-border: 220 35% 20%;
-    --sidebar-ring: 42 70% 58%;
+    --silver: 220 10% 70%;
+    --silver-deep: 220 8% 50%;
+    --silver-light: 220 12% 82%;
+    --gold-glow: 42 95% 65%;
+    --gold-deep: 38 80% 42%;
+    --sage-mist: 150 25% 18%;
+    --sage-deep: 145 50% 55%;
 
-    --timer-focus: 42 70% 58%;
-    --timer-focus-glow: 42 70% 58% / 0.22;
-    --timer-break: 145 50% 45%;
-    --timer-break-glow: 145 50% 45% / 0.18;
-    --timer-urgency: 0 65% 55%;
-    --timer-urgency-glow: 0 65% 55% / 0.28;
+    --sidebar-background: 150 32% 9%;
+    --sidebar-foreground: 45 30% 88%;
+    --sidebar-primary: 42 75% 58%;
+    --sidebar-primary-foreground: 150 40% 12%;
+    --sidebar-accent: 150 25% 16%;
+    --sidebar-accent-foreground: 45 30% 92%;
+    --sidebar-border: 150 22% 20%;
+    --sidebar-ring: 42 75% 58%;
+
+    --timer-focus: 42 75% 58%;
+    --timer-focus-glow: 42 75% 58% / 0.22;
+    --timer-break: 145 50% 50%;
+    --timer-break-glow: 145 50% 50% / 0.18;
+    --timer-urgency: 0 65% 58%;
+    --timer-urgency-glow: 0 65% 58% / 0.28;
   }
 }
 
@@ -159,14 +175,59 @@
     background: hsl(var(--background));
   }
   .college-banner {
-    background: linear-gradient(180deg, hsl(var(--primary)), hsl(220 65% 18%));
+    background:
+      linear-gradient(180deg, hsl(150 40% 14%), hsl(150 35% 20%));
     color: hsl(var(--primary-foreground));
+    position: relative;
+  }
+  .college-banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 100%, hsl(var(--accent) / 0.18), transparent 60%);
+    pointer-events: none;
   }
   .parchment {
     background-color: hsl(var(--background));
     background-image:
-      radial-gradient(hsl(var(--border) / 0.4) 1px, transparent 1px);
-    background-size: 24px 24px;
+      linear-gradient(135deg, hsl(var(--sage-mist)) 0%, hsl(var(--background)) 60%),
+      radial-gradient(hsl(var(--silver) / 0.35) 1px, transparent 1px);
+    background-size: 100% 100%, 24px 24px;
+  }
+  .silver-rule {
+    background: linear-gradient(90deg, transparent, hsl(var(--silver-deep)), transparent);
+    height: 1px;
+  }
+  .gold-foil {
+    background: linear-gradient(135deg,
+      hsl(42 85% 55%) 0%,
+      hsl(45 95% 70%) 25%,
+      hsl(38 80% 45%) 50%,
+      hsl(45 95% 70%) 75%,
+      hsl(42 85% 55%) 100%);
+    background-size: 200% 200%;
+    color: hsl(var(--accent-foreground));
+  }
+  .silver-foil {
+    background: linear-gradient(135deg,
+      hsl(220 10% 75%) 0%,
+      hsl(220 15% 92%) 50%,
+      hsl(220 10% 70%) 100%);
+    color: hsl(var(--foreground));
+  }
+  .text-gold {
+    background: linear-gradient(180deg, hsl(45 95% 65%), hsl(42 80% 48%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .premium-card {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--silver));
+    box-shadow:
+      0 1px 0 hsl(var(--accent) / 0.5) inset,
+      0 0 0 1px hsl(var(--silver-light)),
+      0 12px 32px -16px hsl(150 30% 20% / 0.18);
   }
 
   /* M3 touch targets */
@@ -199,10 +260,22 @@
   /* === Coaching-institute UI (Akash/Allen-inspired) === */
   .institute-hero {
     background:
-      radial-gradient(circle at 12% 18%, hsl(var(--accent) / 0.18), transparent 45%),
-      radial-gradient(circle at 88% 82%, hsl(var(--accent) / 0.12), transparent 50%),
-      linear-gradient(135deg, hsl(220 70% 14%), hsl(220 65% 22%) 55%, hsl(220 60% 28%));
+      radial-gradient(circle at 12% 18%, hsl(var(--accent) / 0.22), transparent 45%),
+      radial-gradient(circle at 88% 82%, hsl(145 50% 45% / 0.18), transparent 50%),
+      linear-gradient(135deg, hsl(150 45% 12%), hsl(150 38% 18%) 55%, hsl(150 32% 24%));
     color: hsl(var(--primary-foreground));
+    position: relative;
+  }
+  .institute-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(hsl(var(--accent) / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--accent) / 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
   }
   .institute-hero-light {
     background:
@@ -220,7 +293,7 @@
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    box-shadow: 0 2px 6px hsl(220 50% 14% / 0.25);
+    box-shadow: 0 2px 6px hsl(150 40% 14% / 0.25);
     clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 50%, 100% 100%, 0 100%);
   }
   .ribbon::before {
@@ -247,9 +320,9 @@
   .badge-jee, .badge-neet, .badge-foundation {
     @apply text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm border;
   }
-  .badge-jee   { background: hsl(220 80% 95%); color: hsl(220 70% 30%); border-color: hsl(220 50% 75%); }
+  .badge-jee   { background: hsl(150 40% 92%); color: hsl(150 50% 24%); border-color: hsl(150 30% 70%); }
   .badge-neet  { background: hsl(145 50% 92%); color: hsl(145 60% 24%); border-color: hsl(145 40% 65%); }
-  .badge-foundation { background: hsl(38 85% 92%); color: hsl(38 75% 28%); border-color: hsl(38 60% 65%); }
+  .badge-foundation { background: hsl(42 85% 92%); color: hsl(38 75% 28%); border-color: hsl(42 60% 65%); }
 
   .helpline-strip {
     background: hsl(var(--accent));
