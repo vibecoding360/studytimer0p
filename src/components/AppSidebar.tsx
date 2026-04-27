@@ -81,7 +81,7 @@ export default function AppSidebar() {
         <button
           onClick={() => document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }))}
           className={cn(
-            "flex items-center gap-3 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-accent transition-all",
+            "flex items-center gap-3 px-3 py-2 rounded-lg text-xs text-sidebar-foreground/65 hover:text-sidebar-foreground hover:bg-sidebar-accent/60 transition-all",
             collapsed && "justify-center px-0"
           )}
           title="Search (⌘K)"
