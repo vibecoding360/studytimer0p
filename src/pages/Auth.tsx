@@ -231,50 +231,66 @@ export default function Auth() {
       <div className="flex-1 grid lg:grid-cols-2">
         {/* Left: marketing hero */}
         <section className="institute-hero relative px-6 md:px-10 lg:px-14 py-12 lg:py-16 overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.06]" style={{
-            backgroundImage: "radial-gradient(hsl(var(--accent)) 1.2px, transparent 1.2px)",
-            backgroundSize: "22px 22px",
-          }} />
           <div className="relative max-w-xl mx-auto lg:mx-0">
-            <div className="inline-flex items-center gap-2 bg-accent/15 border border-accent/40 rounded-full px-3 py-1 mb-5">
-              <Sparkles className="w-3.5 h-3.5 text-accent" />
-              <span className="text-[11px] uppercase tracking-[0.2em] text-accent font-semibold">India's #1 Result-Oriented Institute</span>
+            {/* Trust badge row */}
+            <div className="flex flex-wrap items-center gap-2 mb-5">
+              <div className="inline-flex items-center gap-2 gold-foil rounded-full px-3 py-1 shadow-md">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span className="text-[10px] uppercase tracking-[0.22em] font-bold">India's #1 · 2024</span>
+              </div>
+              <div className="inline-flex items-center gap-2 silver-foil rounded-full px-3 py-1 border border-white/30">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span className="text-[10px] uppercase tracking-[0.22em] font-bold">ISO 9001 · NAAC A+</span>
+              </div>
             </div>
 
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight">
-              Crack <span className="text-accent">JEE · NEET · Olympiads</span> with the Best Faculty in India.
+            <h1 className="font-serif text-4xl md:text-5xl lg:text-[3.5rem] font-bold leading-[1.05] tracking-tight">
+              Where Future <span className="text-gold">Toppers</span>
+              <br />
+              <span className="text-primary-foreground/95">are Forged.</span>
             </h1>
 
-            <div className="double-rule my-6 w-32" />
+            <div className="flex items-center gap-3 my-6">
+              <div className="h-px w-12 bg-accent" />
+              <span className="text-[10px] uppercase tracking-[0.3em] text-accent font-semibold">JEE · NEET · Olympiads</span>
+              <div className="h-px flex-1 bg-accent/30" />
+            </div>
 
-            <p className="text-base md:text-lg text-primary-foreground/85 font-serif italic">
+            <p className="text-base md:text-lg text-primary-foreground/85 font-serif italic leading-relaxed">
               From classroom to AIR 1 — join 18,000+ aspirants who chose MatrixMindset for their journey to the IITs, AIIMS and beyond.
             </p>
 
             <div className="grid grid-cols-3 gap-3 mt-8">
-              <div className="bg-primary/30 border border-accent/30 rounded-md p-3 text-center backdrop-blur-sm">
-                <Trophy className="w-5 h-5 text-accent mx-auto mb-1" />
-                <p className="font-serif text-2xl font-bold text-accent">18K+</p>
-                <p className="text-[10px] uppercase tracking-wider text-primary-foreground/70">Selections</p>
+              <div className="rounded-md p-4 text-center backdrop-blur-sm border border-accent/40 bg-gradient-to-b from-white/5 to-transparent">
+                <Trophy className="w-5 h-5 text-accent mx-auto mb-2" />
+                <p className="font-serif text-2xl font-bold text-gold">18K+</p>
+                <p className="text-[10px] uppercase tracking-wider text-primary-foreground/70 mt-0.5">Selections</p>
               </div>
-              <div className="bg-primary/30 border border-accent/30 rounded-md p-3 text-center backdrop-blur-sm">
-                <Award className="w-5 h-5 text-accent mx-auto mb-1" />
-                <p className="font-serif text-2xl font-bold text-accent">AIR 1</p>
-                <p className="text-[10px] uppercase tracking-wider text-primary-foreground/70">JEE 2024</p>
+              <div className="rounded-md p-4 text-center backdrop-blur-sm border border-accent/40 bg-gradient-to-b from-white/5 to-transparent">
+                <Award className="w-5 h-5 text-accent mx-auto mb-2" />
+                <p className="font-serif text-2xl font-bold text-gold">AIR 1</p>
+                <p className="text-[10px] uppercase tracking-wider text-primary-foreground/70 mt-0.5">JEE 2024</p>
               </div>
-              <div className="bg-primary/30 border border-accent/30 rounded-md p-3 text-center backdrop-blur-sm">
-                <Users className="w-5 h-5 text-accent mx-auto mb-1" />
-                <p className="font-serif text-2xl font-bold text-accent">450+</p>
-                <p className="text-[10px] uppercase tracking-wider text-primary-foreground/70">Faculty</p>
+              <div className="rounded-md p-4 text-center backdrop-blur-sm border border-accent/40 bg-gradient-to-b from-white/5 to-transparent">
+                <Users className="w-5 h-5 text-accent mx-auto mb-2" />
+                <p className="font-serif text-2xl font-bold text-gold">450+</p>
+                <p className="text-[10px] uppercase tracking-wider text-primary-foreground/70 mt-0.5">Faculty</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4 mt-8 text-xs text-primary-foreground/80">
-              <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-accent" /> ISO 9001 Certified</span>
-              <span className="hidden sm:flex items-center gap-1.5"><Award className="w-3.5 h-3.5 text-accent" /> Govt. Recognised</span>
+            {/* Social proof / partners strip */}
+            <div className="mt-10 pt-6 border-t border-accent/20">
+              <p className="text-[10px] uppercase tracking-[0.3em] text-primary-foreground/60 mb-3">Selections in</p>
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-serif font-semibold text-primary-foreground/85">
+                <span>IIT Bombay</span>
+                <span className="text-accent/60">·</span>
+                <span>AIIMS Delhi</span>
+                <span className="text-accent/60">·</span>
+                <span>IIT Madras</span>
+                <span className="text-accent/60">·</span>
+                <span>IISc</span>
+              </div>
             </div>
-
-            <p className="hidden lg:block mt-10 text-xs uppercase tracking-[0.3em] text-accent/80">— Toppers since MMXXV —</p>
           </div>
         </section>
 
@@ -290,10 +306,10 @@ export default function Auth() {
               <h2 className="font-serif text-3xl font-bold tracking-tight text-primary">
                 {forgotMode ? "Reset Your Password" : isLogin ? "Welcome Back, Topper" : "Begin Your Journey"}
               </h2>
-              <div className="gold-rule w-24 mx-auto mt-3" />
+              <div className="silver-rule w-32 mx-auto mt-3" />
             </div>
 
-            <div className="bg-card border-2 border-border rounded-md p-7 shadow-lg relative">
+            <div className="premium-card rounded-md p-7 relative">
               {!forgotMode && <div className="ribbon">Free Trial</div>}
 
               {/* Mode tabs (hidden in forgot mode) */}
