@@ -20,6 +20,7 @@ import Courses from "@/pages/Courses";
 import AdminLogin from "@/pages/admin/AdminLogin";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminGuard from "@/components/admin/AdminGuard";
+import ReadabilityAuditBadge from "@/components/dev/ReadabilityAuditBadge";
 
 import NotFound from "./pages/NotFound";
 
