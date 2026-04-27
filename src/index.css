@@ -175,14 +175,59 @@
     background: hsl(var(--background));
   }
   .college-banner {
-    background: linear-gradient(180deg, hsl(var(--primary)), hsl(220 65% 18%));
+    background:
+      linear-gradient(180deg, hsl(150 40% 14%), hsl(150 35% 20%));
     color: hsl(var(--primary-foreground));
+    position: relative;
+  }
+  .college-banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 100%, hsl(var(--accent) / 0.18), transparent 60%);
+    pointer-events: none;
   }
   .parchment {
     background-color: hsl(var(--background));
     background-image:
-      radial-gradient(hsl(var(--border) / 0.4) 1px, transparent 1px);
-    background-size: 24px 24px;
+      linear-gradient(135deg, hsl(var(--sage-mist)) 0%, hsl(var(--background)) 60%),
+      radial-gradient(hsl(var(--silver) / 0.35) 1px, transparent 1px);
+    background-size: 100% 100%, 24px 24px;
+  }
+  .silver-rule {
+    background: linear-gradient(90deg, transparent, hsl(var(--silver-deep)), transparent);
+    height: 1px;
+  }
+  .gold-foil {
+    background: linear-gradient(135deg,
+      hsl(42 85% 55%) 0%,
+      hsl(45 95% 70%) 25%,
+      hsl(38 80% 45%) 50%,
+      hsl(45 95% 70%) 75%,
+      hsl(42 85% 55%) 100%);
+    background-size: 200% 200%;
+    color: hsl(var(--accent-foreground));
+  }
+  .silver-foil {
+    background: linear-gradient(135deg,
+      hsl(220 10% 75%) 0%,
+      hsl(220 15% 92%) 50%,
+      hsl(220 10% 70%) 100%);
+    color: hsl(var(--foreground));
+  }
+  .text-gold {
+    background: linear-gradient(180deg, hsl(45 95% 65%), hsl(42 80% 48%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .premium-card {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--silver));
+    box-shadow:
+      0 1px 0 hsl(var(--accent) / 0.5) inset,
+      0 0 0 1px hsl(var(--silver-light)),
+      0 12px 32px -16px hsl(150 30% 20% / 0.18);
   }
 
   /* M3 touch targets */
