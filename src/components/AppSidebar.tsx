@@ -90,7 +90,7 @@ export default function AppSidebar() {
           {!collapsed && (
             <>
               <span>Search</span>
-              <kbd className="ml-auto text-[10px] font-mono bg-secondary px-1.5 py-0.5 rounded">⌘K</kbd>
+              <kbd className="ml-auto text-[10px] font-mono bg-sidebar-accent/80 text-sidebar-foreground px-1.5 py-0.5 rounded border border-sidebar-border">⌘K</kbd>
             </>
           )}
         </button>
