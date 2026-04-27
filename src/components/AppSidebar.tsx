@@ -106,7 +106,7 @@ export default function AppSidebar() {
           <button
             onClick={() => setShowSignOutDialog(true)}
             className={cn(
-              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all",
+              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground/75 hover:text-destructive-foreground hover:bg-destructive/80 transition-all",
               collapsed && "justify-center px-0"
             )}
             title={collapsed ? "Sign Out" : undefined}
