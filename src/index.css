@@ -260,10 +260,22 @@
   /* === Coaching-institute UI (Akash/Allen-inspired) === */
   .institute-hero {
     background:
-      radial-gradient(circle at 12% 18%, hsl(var(--accent) / 0.18), transparent 45%),
-      radial-gradient(circle at 88% 82%, hsl(var(--accent) / 0.12), transparent 50%),
-      linear-gradient(135deg, hsl(220 70% 14%), hsl(220 65% 22%) 55%, hsl(220 60% 28%));
+      radial-gradient(circle at 12% 18%, hsl(var(--accent) / 0.22), transparent 45%),
+      radial-gradient(circle at 88% 82%, hsl(145 50% 45% / 0.18), transparent 50%),
+      linear-gradient(135deg, hsl(150 45% 12%), hsl(150 38% 18%) 55%, hsl(150 32% 24%));
     color: hsl(var(--primary-foreground));
+    position: relative;
+  }
+  .institute-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(hsl(var(--accent) / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--accent) / 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
   }
   .institute-hero-light {
     background:
@@ -281,7 +293,7 @@
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    box-shadow: 0 2px 6px hsl(220 50% 14% / 0.25);
+    box-shadow: 0 2px 6px hsl(150 40% 14% / 0.25);
     clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 50%, 100% 100%, 0 100%);
   }
   .ribbon::before {
@@ -308,9 +320,9 @@
   .badge-jee, .badge-neet, .badge-foundation {
     @apply text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm border;
   }
-  .badge-jee   { background: hsl(220 80% 95%); color: hsl(220 70% 30%); border-color: hsl(220 50% 75%); }
+  .badge-jee   { background: hsl(150 40% 92%); color: hsl(150 50% 24%); border-color: hsl(150 30% 70%); }
   .badge-neet  { background: hsl(145 50% 92%); color: hsl(145 60% 24%); border-color: hsl(145 40% 65%); }
-  .badge-foundation { background: hsl(38 85% 92%); color: hsl(38 75% 28%); border-color: hsl(38 60% 65%); }
+  .badge-foundation { background: hsl(42 85% 92%); color: hsl(38 75% 28%); border-color: hsl(42 60% 65%); }
 
   .helpline-strip {
     background: hsl(var(--accent));
