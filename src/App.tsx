@@ -65,6 +65,7 @@ const App = () => (
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <ReadabilityAuditBadge />
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
