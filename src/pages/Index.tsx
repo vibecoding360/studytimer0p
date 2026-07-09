@@ -154,7 +154,7 @@ export default function Dashboard() {
       color: colors[courses.length % colors.length],
     });
     if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: "Error", description: toUserMessage(error, "Could not add track."), variant: "destructive" });
     } else {
       triggerHaptic("light");
       setNewCourse({ name: "", code: "", semester: "" });
