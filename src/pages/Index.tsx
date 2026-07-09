@@ -180,6 +180,7 @@ export default function Dashboard() {
 
   return (
     <div ref={containerRef} className="pb-28 md:pb-8">
+      <SEO title="Dashboard" description="Your MatrixMindset dashboard — deep-work timer, today's plan, mastery tracks, and 365-day consistency at a glance." path="/" />
       <AnimatePresence>
         {refreshing && (
           <motion.div
