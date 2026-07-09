@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { Compass, Sparkles, Loader2, ExternalLink, BookOpen, Video, Database, GraduationCap } from "lucide-react";
+import SEO from "@/components/SEO";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface RoadmapWeek {
