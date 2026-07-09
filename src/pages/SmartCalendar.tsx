@@ -13,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar as CalIcon, AlertTriangle, CheckCircle2, Plus, Trash2, Pencil, X } from "lucide-react";
 import { format, parseISO, isAfter, isBefore, addDays } from "date-fns";
+import SEO from "@/components/SEO";
 import { toast } from "sonner";
 
 interface DateEvent {
