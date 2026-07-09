@@ -270,10 +270,10 @@ export default function StudyTimer() {
             />
 
             <div className="flex items-center gap-3 relative z-10">
-              <Button variant="ghost" size="icon" onClick={togglePause} className="w-14 h-14 rounded-full border border-border/30 touch-target">
+              <Button variant="ghost" size="icon" aria-label={state === "running" ? "Pause timer" : "Resume timer"} onClick={togglePause} className="w-14 h-14 rounded-full border border-border/30 touch-target">
                 {state === "running" ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
               </Button>
-              <Button variant="ghost" size="icon" onClick={resetTimer} className="w-12 h-12 rounded-full touch-target">
+              <Button variant="ghost" size="icon" aria-label="Reset timer" onClick={resetTimer} className="w-12 h-12 rounded-full touch-target">
                 <RotateCcw className="w-4 h-4" />
               </Button>
               {!isBreak && (
