@@ -11,6 +11,7 @@ import {
   Sparkles, ShieldCheck, Phone, Eye, EyeOff, Check, X, Loader2,
 } from "lucide-react";
 import { z } from "zod";
+import SEO from "@/components/SEO";
 
 // === Validation schemas ===
 const emailSchema = z.string().trim().email({ message: "Please enter a valid email address" }).max(255);
