@@ -97,6 +97,7 @@ export default function GradeCalculator() {
 
   return (
     <div>
+      <SEO title="Grade Calculator" description="Track your course standing and simulate outcomes with weighted assessments." path="/grades" />
       <h1 className="text-2xl font-bold tracking-tight mb-1">Grade Calculator</h1>
       <p className="text-muted-foreground text-sm mb-6">Track your standing and simulate outcomes</p>
 
