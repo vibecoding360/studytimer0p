@@ -244,6 +244,7 @@ export default function StudyTimer() {
 
   return (
     <div className="relative min-h-[calc(100vh-4rem)]">
+      <SEO title="Study Timer" description="Deep-focus Pomodoro-style timer with Zen soundscapes and focus rating for JEE and NEET aspirants." path="/timer" />
       <AnimatePresence mode="wait">
         {state === "rating" ? (
           <motion.div
