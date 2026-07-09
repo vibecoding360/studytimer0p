@@ -184,7 +184,8 @@ export default function Auth() {
         navigate("/");
       }
     } catch (err: any) {
-      toast({ title: "Authentication failed", description: err.message, variant: "destructive" });
+      const { toUserMessage } = await import("@/lib/error-messages");
+      toast({ title: "Authentication failed", description: toUserMessage(err, "Unable to sign in. Please try again."), variant: "destructive" });
     } finally {
       setLoading(false);
     }

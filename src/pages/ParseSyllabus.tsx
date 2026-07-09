@@ -13,6 +13,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import UploadZone from "@/components/UploadZone";
+import { toUserMessage } from "@/lib/error-messages";
 import ProfessorCard from "@/components/ProfessorCard";
 
 interface ParsedData {
@@ -112,7 +113,7 @@ export default function ParseSyllabus() {
       setParsed(data);
       toast.success(`Found ${data.dates?.length || 0} dates, ${data.grading_weights?.length || 0} weights, ${data.readings?.length || 0} readings.`);
     } catch (err: any) {
-      toast.error(err.message || "Parse failed");
+      toast.error(toUserMessage(err, "Parse failed"));
     } finally {
       setParsing(false);
     }
@@ -155,7 +156,7 @@ export default function ParseSyllabus() {
       toast.success("Mastery Roadmap Saved! Calendar updated.");
       setTimeout(() => navigate("/smart-calendar"), 600);
     } catch (err: any) {
-      toast.error(err.message || "Save failed");
+      toast.error(toUserMessage(err, "Save failed"));
     } finally {
       setSaving(false);
     }

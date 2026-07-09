@@ -18,6 +18,7 @@ import TodaysPlan from "@/components/TodaysPlan";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usePullToRefresh } from "@/hooks/use-pull-to-refresh";
 import { triggerHaptic } from "@/lib/haptics";
+import { toUserMessage } from "@/lib/error-messages";
 import { buildGoalEngine, generateReviewQueue, generateTodayPlan, PlanItem, ReviewItem } from "@/lib/planning";
 
 
@@ -153,7 +154,7 @@ export default function Dashboard() {
       color: colors[courses.length % colors.length],
     });
     if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: "Error", description: toUserMessage(error, "Could not add track."), variant: "destructive" });
     } else {
       triggerHaptic("light");
       setNewCourse({ name: "", code: "", semester: "" });
@@ -166,7 +167,7 @@ export default function Dashboard() {
     if (!deletingCourse) return;
     const { error } = await supabase.from("courses").delete().eq("id", deletingCourse.id);
     if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: "Error", description: toUserMessage(error, "Could not remove track."), variant: "destructive" });
     } else {
       triggerHaptic("medium");
       toast({ title: "Track removed", description: `${deletingCourse.name} and all milestones have been deleted.` });
