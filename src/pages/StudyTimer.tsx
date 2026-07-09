@@ -13,6 +13,7 @@ import TimerDisplay from "@/components/study-timer/TimerDisplay";
 import FocusRating from "@/components/study-timer/FocusRating";
 import SoundscapeToggle from "@/components/study-timer/SoundscapeToggle";
 import { soundscapeEngine } from "@/lib/soundscape-engine";
+import SEO from "@/components/SEO";
 import { playCompletionChime, playBreakEndPing, playUrgencyTick } from "@/lib/zen-sounds";
 import confetti from "canvas-confetti";
 
