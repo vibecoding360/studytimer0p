@@ -137,6 +137,7 @@ export default function StudyArchitect() {
 
   return (
     <div>
+      <SEO title="Study Architect" description="Generate AI-powered study roadmaps and curated resources for JEE, NEET, and Foundation programs." path="/study-architect" />
       <h1 className="text-2xl font-bold tracking-tight mb-1">Study Architect</h1>
       <p className="text-muted-foreground text-sm mb-6">AI-powered study roadmaps and resources</p>
 
