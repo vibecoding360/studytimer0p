@@ -8,6 +8,7 @@ import { Flame, Trophy, Calendar, Play, CheckCircle2 } from "lucide-react";
 import { playCompletionChime } from "@/lib/zen-sounds";
 import confetti from "canvas-confetti";
 import { toast } from "@/hooks/use-toast";
+import SEO from "@/components/SEO";
 import DailyNotes from "@/components/habit-tracker/DailyNotes";
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -153,6 +154,7 @@ export default function HabitTracker() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-24">
+      <SEO title="365-Day Consistency Challenge" description="Track a full year of study consistency with daily completions, streaks, and reflective notes." path="/365" />
       {/* Header */}
       <div className="text-center space-y-2">
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight flex items-center justify-center gap-2">

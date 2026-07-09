@@ -20,6 +20,7 @@ import { usePullToRefresh } from "@/hooks/use-pull-to-refresh";
 import { triggerHaptic } from "@/lib/haptics";
 import { toUserMessage } from "@/lib/error-messages";
 import { buildGoalEngine, generateReviewQueue, generateTodayPlan, PlanItem, ReviewItem } from "@/lib/planning";
+import SEO from "@/components/SEO";
 
 
 interface Course {
@@ -62,12 +63,13 @@ function SwipeableCourseCard({ course, onDelete }: { course: Course; onDelete: (
           <div className="flex items-center gap-3 mb-3">
             <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: course.color }} />
             <div className="flex-1 min-w-0">
-              <h3 className="text-base font-semibold group-hover:text-primary transition-colors duration-200">{course.name}</h3>
+              <h2 className="text-base font-semibold group-hover:text-primary transition-colors duration-200">{course.name}</h2>
               {course.code && <p className="text-xs text-muted-foreground mt-0.5">{course.code}</p>}
             </div>
             <Button
               variant="ghost"
               size="icon"
+              aria-label={`Delete ${course.name}`}
               className="h-12 w-12 touch-target opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-muted-foreground hover:text-destructive hidden md:flex"
               onClick={(e) => {
                 e.stopPropagation();
@@ -178,6 +180,7 @@ export default function Dashboard() {
 
   return (
     <div ref={containerRef} className="pb-28 md:pb-8">
+      <SEO title="Dashboard" description="Your MatrixMindset dashboard — deep-work timer, today's plan, mastery tracks, and 365-day consistency at a glance." path="/" />
       <AnimatePresence>
         {refreshing && (
           <motion.div

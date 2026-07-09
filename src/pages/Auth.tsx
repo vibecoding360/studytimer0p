@@ -11,6 +11,7 @@ import {
   Sparkles, ShieldCheck, Phone, Eye, EyeOff, Check, X, Loader2,
 } from "lucide-react";
 import { z } from "zod";
+import SEO from "@/components/SEO";
 
 // === Validation schemas ===
 const emailSchema = z.string().trim().email({ message: "Please enter a valid email address" }).max(255);
@@ -203,6 +204,7 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <SEO title="Sign In" description="Sign in or create your MatrixMindset account to start a 365-day consistency journey for JEE, NEET, and Foundation." path="/auth" />
       {/* Helpline strip */}
       <div className="helpline-strip">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-1.5 flex items-center justify-between flex-wrap gap-2">

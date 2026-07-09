@@ -15,6 +15,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import UploadZone from "@/components/UploadZone";
 import { toUserMessage } from "@/lib/error-messages";
 import ProfessorCard from "@/components/ProfessorCard";
+import SEO from "@/components/SEO";
 
 interface ParsedData {
   dates: Array<{ title: string; date?: string; event_type: string; is_high_stakes: boolean }>;
@@ -172,6 +173,7 @@ export default function ParseSyllabus() {
 
   return (
     <div>
+      <SEO title="AI Roadmap Parser" description="Upload a PDF or image syllabus and extract dates, grading weights, and readings automatically." path="/parse" />
       <h1 className="text-2xl font-bold tracking-tight mb-1">AI Roadmap Parser</h1>
       <p className="text-muted-foreground text-sm mb-6">Upload or paste your roadmap to extract structured data</p>
 

@@ -1,0 +1,16 @@
+# MatrixMindset
+
+> MatrixMindset is a 365-day consistency engine for JEE, NEET, and Foundation aspirants. Track deep-focus sessions, milestones, and study progress against AI-parsed syllabus roadmaps.
+
+## Pages
+
+- [Sign In](/auth): Sign in or create a MatrixMindset account.
+- [Reset Password](/reset-password): Reset your account password.
+
+## Optional
+
+- [Dashboard](/): Personal deep-work dashboard (requires sign-in).
+- [Smart Calendar](/calendar): Timeline of syllabus milestones (requires sign-in).
+- [Study Timer](/timer): Focus timer with Zen soundscapes (requires sign-in).
+- [365 Challenge](/365): 365-day consistency tracker (requires sign-in).
+- [Mastery Tracks](/courses): Course and grade management (requires sign-in).

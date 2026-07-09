@@ -13,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar as CalIcon, AlertTriangle, CheckCircle2, Plus, Trash2, Pencil, X } from "lucide-react";
 import { format, parseISO, isAfter, isBefore, addDays } from "date-fns";
+import SEO from "@/components/SEO";
 import { toast } from "sonner";
 
 interface DateEvent {
@@ -313,6 +314,7 @@ export default function SmartCalendar() {
 
   return (
     <div>
+      <SEO title="Smart Calendar" description="Every JEE, NEET, and coursework deadline in one clean timeline — upcoming, past, and all milestones at a glance." path="/calendar" />
       <div className="flex items-center justify-between mb-6 gap-3 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Smart Calendar</h1>
