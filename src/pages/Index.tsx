@@ -18,6 +18,7 @@ import TodaysPlan from "@/components/TodaysPlan";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usePullToRefresh } from "@/hooks/use-pull-to-refresh";
 import { triggerHaptic } from "@/lib/haptics";
+import { toUserMessage } from "@/lib/error-messages";
 import { buildGoalEngine, generateReviewQueue, generateTodayPlan, PlanItem, ReviewItem } from "@/lib/planning";
 
 
