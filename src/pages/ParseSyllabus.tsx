@@ -15,6 +15,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import UploadZone from "@/components/UploadZone";
 import { toUserMessage } from "@/lib/error-messages";
 import ProfessorCard from "@/components/ProfessorCard";
+import SEO from "@/components/SEO";
 
 interface ParsedData {
   dates: Array<{ title: string; date?: string; event_type: string; is_high_stakes: boolean }>;
