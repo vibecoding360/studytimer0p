@@ -113,7 +113,7 @@ export default function ParseSyllabus() {
       setParsed(data);
       toast.success(`Found ${data.dates?.length || 0} dates, ${data.grading_weights?.length || 0} weights, ${data.readings?.length || 0} readings.`);
     } catch (err: any) {
-      toast.error(err.message || "Parse failed");
+      toast.error(toUserMessage(err, "Parse failed"));
     } finally {
       setParsing(false);
     }
