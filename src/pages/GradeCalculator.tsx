@@ -8,6 +8,7 @@ import { Slider } from "@/components/ui/slider";
 import { motion } from "framer-motion";
 import { Calculator, Target, TrendingUp } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import SEO from "@/components/SEO";
 
 interface Weight {
   id: string;
