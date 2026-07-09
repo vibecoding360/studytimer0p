@@ -314,6 +314,7 @@ export default function SmartCalendar() {
 
   return (
     <div>
+      <SEO title="Smart Calendar" description="Every JEE, NEET, and coursework deadline in one clean timeline — upcoming, past, and all milestones at a glance." path="/calendar" />
       <div className="flex items-center justify-between mb-6 gap-3 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Smart Calendar</h1>
