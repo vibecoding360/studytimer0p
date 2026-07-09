@@ -167,7 +167,7 @@ export default function Dashboard() {
     if (!deletingCourse) return;
     const { error } = await supabase.from("courses").delete().eq("id", deletingCourse.id);
     if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: "Error", description: toUserMessage(error, "Could not remove track."), variant: "destructive" });
     } else {
       triggerHaptic("medium");
       toast({ title: "Track removed", description: `${deletingCourse.name} and all milestones have been deleted.` });
