@@ -113,6 +113,7 @@ export default function Courses() {
 
   return (
     <div className="space-y-10">
+      <SEO title="Mastery Tracks" description="Explore JEE, NEET, and Foundation courses at MatrixMindset — India's premier coaching institute." path="/courses" />
       {/* === HERO === */}
       <section className="institute-hero relative overflow-hidden rounded-lg border-2 border-accent/40 px-6 md:px-10 py-10 md:py-14">
         <div className="absolute inset-0 opacity-[0.06]" style={{
