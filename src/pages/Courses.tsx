@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { BookOpen, Clock, ImageOff, Search, Sparkles, Trophy, Users, Star, Award, TrendingUp, ShieldCheck, Phone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import SEO from "@/components/SEO";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
