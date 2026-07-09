@@ -204,6 +204,7 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <SEO title="Sign In" description="Sign in or create your MatrixMindset account to start a 365-day consistency journey for JEE, NEET, and Foundation." path="/auth" />
       {/* Helpline strip */}
       <div className="helpline-strip">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-1.5 flex items-center justify-between flex-wrap gap-2">
