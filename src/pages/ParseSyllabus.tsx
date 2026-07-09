@@ -13,6 +13,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import UploadZone from "@/components/UploadZone";
+import { toUserMessage } from "@/lib/error-messages";
 import ProfessorCard from "@/components/ProfessorCard";
 
 interface ParsedData {
