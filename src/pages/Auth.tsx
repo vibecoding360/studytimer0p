@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useAuth } from "@/lib/auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -52,6 +52,10 @@ export default function Auth() {
 
   const { signIn, signUp, resetPassword } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  // Preserve `?next=/path` (used by OAuth consent + protected routes). Same-origin relative paths only.
+  const nextRaw = searchParams.get("next");
+  const nextPath = nextRaw && nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "/";
 
   // Live validation: only show error if field has been touched
   const liveErrors: FieldErrors = useMemo(() => {
@@ -178,10 +182,13 @@ export default function Auth() {
     try {
       if (isLogin) {
         await signIn(email, password);
+        // Full navigation so OAuth consent reloads with a fresh session cookie.
+        if (nextPath !== "/") { window.location.href = nextPath; return; }
         navigate("/");
       } else {
         await signUp(email, password, name);
         toast({ title: "Account created", description: "Welcome to MatrixMindset!" });
+        if (nextPath !== "/") { window.location.href = nextPath; return; }
         navigate("/");
       }
     } catch (err: any) {
