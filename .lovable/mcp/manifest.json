@@ -1,0 +1,289 @@
+{
+  "version": 1,
+  "sdk_version": "0.23.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://nhttxgiskwvykwcymbsw.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "matrixmindset-mcp",
+      "version": "0.1.0",
+      "title": "MatrixMindset"
+    },
+    "tools": [
+      {
+        "name": "list_courses",
+        "title": "List mastery tracks",
+        "description": "List the signed-in user's mastery tracks (courses) with id, name, code, color, semester and professor info.",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_syllabus_events",
+        "title": "List calendar events",
+        "description": "List syllabus/calendar milestones for the signed-in user. Filter by course_id and by time window (upcoming, past, or all).",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "course_id": {
+              "description": "Optional course id to filter by.",
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "window": {
+              "default": "upcoming",
+              "description": "Time window relative to today.",
+              "type": "string",
+              "enum": [
+                "upcoming",
+                "past",
+                "all"
+              ]
+            },
+            "limit": {
+              "default": 50,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_syllabus_event",
+        "title": "Create calendar event",
+        "description": "Create a milestone / calendar event (exam, assignment, quiz, etc.) for the signed-in user.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "date": {
+              "type": "string",
+              "description": "ISO date YYYY-MM-DD."
+            },
+            "event_type": {
+              "default": "assignment",
+              "description": "e.g. exam, assignment, quiz, project, reading.",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            },
+            "course_id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "is_high_stakes": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "title",
+            "date"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_study_sessions",
+        "title": "List focus sessions",
+        "description": "List the signed-in user's recent focus/study sessions with duration, mode, focus score and optional course link.",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "course_id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "limit": {
+              "default": 25,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "log_study_session",
+        "title": "Log a focus session",
+        "description": "Record a completed focus/study session for the signed-in user.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "duration_minutes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 600
+            },
+            "mode": {
+              "default": "focus",
+              "description": "e.g. focus, review, deep-work.",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            },
+            "focus_score": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            },
+            "commit_message": {
+              "description": "What you worked on.",
+              "type": "string",
+              "maxLength": 500
+            },
+            "course_id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          "required": [
+            "duration_minutes"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_365_stats",
+        "title": "365 Challenge stats",
+        "description": "Return the signed-in user's 365-day consistency stats: total days completed, current streak, percent progress, and today's completion status.",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "complete_today",
+        "title": "Mark today complete",
+        "description": "Mark today as complete in the 365-Day Consistency Challenge for the signed-in user. Idempotent for the same day.",
+        "annotations": {
+          "readOnlyHint": false,
+          "idempotentHint": true,
+          "destructiveHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_daily_note",
+        "title": "Read a daily note",
+        "description": "Read the signed-in user's daily note for a specific date (defaults to today).",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "date": {
+              "description": "ISO date YYYY-MM-DD. Defaults to today.",
+              "type": "string"
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "set_daily_note",
+        "title": "Write a daily note",
+        "description": "Create or overwrite the signed-in user's daily note for a specific date (defaults to today).",
+        "annotations": {
+          "readOnlyHint": false,
+          "idempotentHint": true,
+          "destructiveHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "note_text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10000
+            },
+            "date": {
+              "description": "ISO date YYYY-MM-DD. Defaults to today.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "note_text"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_published_courses",
+        "title": "Browse MatrixMindset catalog",
+        "description": "List all courses published by MatrixMindset admins in the public catalog (title, price, duration, description).",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
